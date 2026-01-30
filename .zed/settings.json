@@ -1,0 +1,91 @@
+{
+  // -- Cấu hình cơ bản --
+  "theme": "Catppuccin Mocha", // Nền xanh ghi cực dịu, không phải đen
+  "icon_theme": "Catppuccin Mocha",
+  "ui_font_size": 16,
+  "buffer_font_family": "JetBrains Mono", // Vẫn giữ font xịn
+  "buffer_font_size": 15,
+
+  // -- Editor --
+  "tab_size": 2,
+  "hard_tabs": false,
+  "soft_wrap": "editor_width",
+  "ensure_final_newline_on_save": true,
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware",
+  },
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+  },
+
+  // -- Terminal --
+  "terminal": {
+    "font_family": "JetBrains Mono",
+    "font_size": 14,
+    "shell": "system",
+  },
+
+  // -- Giao diện gọn gàng --
+  "project_panel": { "auto_fold_dirs": true },
+  "toolbar": { "breadcrumbs": true, "quick_actions": false },
+  "tabs": { "file_icons": true, "git_status": true },
+  "status_bar": {},
+
+  // -- AI --
+  "features": { "edit_prediction_provider": "copilot" },
+  "show_completions_on_input": true,
+
+  // -- File Types --
+  "file_types": {
+    "Shell Script": ["env", ".env", ".env.example"],
+  },
+
+  // -- Languages --
+  "languages": {
+    "PHP": { "tab_size": 4, "format_on_save": "on" },
+    "Blade": { "tab_size": 4 },
+    "TypeScript": {
+      "tab_size": 2,
+      "format_on_save": "on",
+      "code_actions_on_format": { "source.organizeImports": true },
+    },
+    "TSX": {
+      "tab_size": 2,
+      "format_on_save": "on",
+      "code_actions_on_format": { "source.organizeImports": true },
+    },
+    "JSON": { "tab_size": 2 },
+    "Markdown": { "format_on_save": "off" },
+  },
+  "lsp": {
+    "vtsls": { "settings": { "vtsls": { "autoUseWorkspaceTsdk": true } } },
+  },
+
+  // -- QUAN TRỌNG: KHỬ MÀU XANH LÁ (ANTI-GREEN) --
+  "theme_overrides": {
+    "Tokyo Night Storm": {
+      // 1. Chỉnh lại syntax để bỏ màu xanh lá
+      "syntax": {
+        // String (thường là xanh lá) -> Đổi sang Cam Đất (dễ nhìn cho mắt loạn)
+        "string": { "color": "#ff9e64" },
+        "string.regex": { "color": "#ff9e64" },
+        "string.special": { "color": "#ff9e64" },
+
+        // Class/Type (đôi khi là xanh lá/mint) -> Đổi sang Xanh Biển Nhạt
+        "type": { "color": "#7dcfff" },
+        "constructor": { "color": "#7dcfff" },
+
+        // Giữ các màu an toàn khác
+        "keyword": { "color": "#bb9af7" }, // Tím
+        "function": { "color": "#7aa2f7" }, // Xanh dương
+        "variable": { "color": "#c0caf5" }, // Trắng đục
+        "comment": { "color": "#565f89", "font_style": "italic" }, // Xám
+      },
+      // 4. Tinh chỉnh nền cho êm hơn nữa
+      "editor.background": "#24283b", // Màu xanh đen signature của Tokyo Night
+      "panel.background": "#1f2335",
+    },
+  },
+}
