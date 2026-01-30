@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useUser } from "@/services/user";
+import { updateAvatar, useUser } from "@/services/user";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import dayjs from "dayjs";
@@ -29,14 +29,45 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 
 export default function AccountPage() {
-  const { user } = useUser();
+  const { user, mutate } = useUser();
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleAvatarClick = () => {
-    toast.info("Avatar clicked - open file picker"); // Sai react-dropzone
-  };
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      try {
+        setIsUploading(true);
+        await updateAvatar(formData);
+        toast.success("Cập nhật ảnh đại diện thành công!");
+        mutate(); // SWR refetch
+      } catch {
+        toast.error("Upload thất bại");
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [mutate],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
+    },
+    maxFiles: 1,
+    maxSize: 5 * 1024 * 1024, // 5MB
+    disabled: isUploading,
+  });
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
@@ -45,19 +76,35 @@ export default function AccountPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="relative group">
-                <div className="cursor-pointer" onClick={handleAvatarClick}>
-                  <Avatar className="h-20 w-20 border-4 border-white/30 group-hover:border-blue-400 transition-all duration-200">
+              <div
+                {...getRootProps()}
+                className="relative group cursor-pointer"
+              >
+                <input {...getInputProps()} />
+                <Avatar className="h-20 w-20 border-4 border-white/30 group-hover:border-blue-400 transition-all duration-200">
+                  {isUploading ? (
+                    <div className="flex items-center justify-center h-full w-full bg-black/50 rounded-full">
+                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
+                    </div>
+                  ) : (
                     <AvatarImage
                       src={user?.avatar || "/assets/svg/default-avatar.png"}
                     />
-                  </Avatar>
+                  )}
+                </Avatar>
 
-                  {/* Overlay khi hover */}
-                  <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <Camera className="h-6 w-6 text-white" />
-                  </div>
+                {/* Overlay khi hover */}
+                <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Camera className="h-6 w-6 text-white" />
                 </div>
+                
+                {isDragActive && (
+                  <div className="absolute inset-0 bg-blue-500/70 rounded-full flex items-center justify-center">
+                    <p className="text-white text-sm font-medium">
+                      Thả ảnh vào đây
+                    </p>
+                  </div>
+                )}
               </div>
               <div>
                 <h1 className="text-3xl font-bold">

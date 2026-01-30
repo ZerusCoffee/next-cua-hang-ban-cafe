@@ -32,3 +32,10 @@ export const updateProfile = (data: z.infer<typeof updateProfileSchema>) => {
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };
+
+export const updateAvatar = (data: FormData) => {
+  return axios
+    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/avatar`, data)
+    .then((res) => res.data)
+    .catch((error: AxiosError) => error.response?.data);
+};
