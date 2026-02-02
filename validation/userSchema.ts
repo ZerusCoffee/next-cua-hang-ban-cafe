@@ -8,6 +8,10 @@ export const changePasswordSchema = z
       .string()
       .min(6, "Vui lòng xác nhận mật khẩu mới"),
   })
+  .refine((data) => data.new_password !== data.current_password, {
+    message: "Mật khẩu mới không được trùng với mật khẩu hiện tại",
+    path: ["new_password"],
+  })
   .refine((data) => data.new_password === data.new_password_confirmation, {
     message: "Mật khẩu xác nhận không khớp",
     path: ["new_password_confirmation"],

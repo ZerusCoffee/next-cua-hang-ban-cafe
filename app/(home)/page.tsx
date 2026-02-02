@@ -1,3 +1,9 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Trang chủ | Zerus Coffee",
+};
+
 export default function HomePage() {
   return (
     <div>

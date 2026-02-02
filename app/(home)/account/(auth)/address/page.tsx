@@ -1,5 +1,9 @@
 "use client";
 
+import AddAddressDialog from "@/components/dialog/add-address-dialog";
+import EditAddressDialog from "@/components/dialog/edit-address-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,529 +11,368 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { deleteAddress, useAddress } from "@/services/address";
+import { Address } from "@/types/address.type";
 import {
-  MapPin,
-  Plus,
-  Edit,
-  Trash2,
-  Home,
-  Briefcase,
   Check,
+  Edit,
+  Home,
+  MapPin,
+  Phone,
+  Plus,
+  Trash2,
+  User,
 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useState } from "react";
-
-const addressSchema = z.object({
-  fullName: z.string().min(2, "Họ tên phải có ít nhất 2 ký tự"),
-  phone: z.string().regex(/^(0[3|5|7|8|9])+([0-9]{8})$/, "Số điện thoại không hợp lệ"),
-  province: z.string().min(1, "Vui lòng chọn tỉnh/thành phố"),
-  district: z.string().min(1, "Vui lòng chọn quận/huyện"),
-  ward: z.string().min(1, "Vui lòng chọn phường/xã"),
-  address: z.string().min(5, "Địa chỉ phải có ít nhất 5 ký tự"),
-  type: z.enum(["home", "office"]),
-  isDefault: z.boolean(),
-});
-
-type AddressFormData = z.infer<typeof addressSchema>;
-
-const provinces = [
-  "Hà Nội",
-  "TP. Hồ Chí Minh",
-  "Đà Nẵng",
-  "Hải Phòng",
-  "Cần Thơ",
-];
-
-const addresses = [
-  {
-    id: 1,
-    fullName: "Nguyễn Văn A",
-    phone: "0987654321",
-    address: "123 Đường ABC, Phường XYZ",
-    district: "Quận 1",
-    province: "TP. Hồ Chí Minh",
-    ward: "Phường Bến Nghé",
-    type: "home" as const,
-    isDefault: true,
-  },
-  {
-    id: 2,
-    fullName: "Nguyễn Văn A",
-    phone: "0987654322",
-    address: "456 Đường DEF, Phường UVW",
-    district: "Quận 3",
-    province: "TP. Hồ Chí Minh",
-    ward: "Phường 5",
-    type: "office" as const,
-    isDefault: false,
-  },
-];
+import { toast } from "sonner";
 
 export default function AddressPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingAddress, setEditingAddress] = useState<number | null>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
-  const form = useForm<AddressFormData>({
-    resolver: zodResolver(addressSchema),
-    defaultValues: {
-      fullName: "",
-      phone: "",
-      province: "",
-      district: "",
-      ward: "",
-      address: "",
-      type: "home",
-      isDefault: false,
-    },
-  });
+  const { addresses, isLoading, mutate } = useAddress();
 
-  const onSubmit = (data: AddressFormData) => {
-    console.log(data);
-    setIsDialogOpen(false);
-    form.reset();
+  const handleEdit = (address: Address) => {
+    setSelectedAddress(address);
+    setIsEditDialogOpen(true);
   };
 
-  const handleEdit = (id: number) => {
-    const address = addresses.find((addr) => addr.id === id);
-    if (address) {
-      form.reset(address);
-      setEditingAddress(id);
-      setIsDialogOpen(true);
-    }
-  };
-
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (confirm("Bạn có chắc chắn muốn xóa địa chỉ này?")) {
-      console.log("Delete address:", id);
+      try {
+        await deleteAddress(id);
+        toast.success("Xóa địa chỉ thành công!");
+        mutate();
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          toast.error(error.message);
+        }
+        toast.error("Lỗi khi xóa địa chỉ");
+      }
     }
   };
 
-  const handleAddNew = () => {
-    form.reset({
-      fullName: "",
-      phone: "",
-      province: "",
-      district: "",
-      ward: "",
-      address: "",
-      type: "home",
-      isDefault: false,
-    });
-    setEditingAddress(null);
-    setIsDialogOpen(true);
+  const handleSuccess = () => {
+    mutate();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Sổ địa chỉ</h1>
-              <p className="text-gray-600 mt-2">
-                Quản lý địa chỉ giao hàng của bạn
-              </p>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <MapPin className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">
+                    Sổ địa chỉ
+                  </h1>
+                  <p className="text-gray-600 mt-1">
+                    Quản lý địa chỉ giao hàng của bạn
+                  </p>
+                </div>
+              </div>
             </div>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={handleAddNew}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Thêm địa chỉ mới
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingAddress ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
-                  </DialogTitle>
-                  <DialogDescription>
-                    Thêm địa chỉ giao hàng mới để thuận tiện cho việc mua sắm
-                  </DialogDescription>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="fullName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Họ và tên *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Nguyễn Văn A" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Số điện thoại *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="0987654321" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="province"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Tỉnh/Thành phố *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn tỉnh/thành phố" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {provinces.map((province) => (
-                                  <SelectItem key={province} value={province}>
-                                    {province}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="district"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Quận/Huyện *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Quận 1" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="ward"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Phường/Xã *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Phường Bến Nghé" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Địa chỉ chi tiết *</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Số nhà, tên đường, tòa nhà..."
-                              className="resize-none"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Loại địa chỉ</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Chọn loại địa chỉ" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="home">
-                                  <div className="flex items-center gap-2">
-                                    <Home className="h-4 w-4" />
-                                    Nhà riêng
-                                  </div>
-                                </SelectItem>
-                                <SelectItem value="office">
-                                  <div className="flex items-center gap-2">
-                                    <Briefcase className="h-4 w-4" />
-                                    Văn phòng
-                                  </div>
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="isDefault"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">
-                                Đặt làm địa chỉ mặc định
-                              </FormLabel>
-                              <p className="text-sm text-gray-500">
-                                Sử dụng địa chỉ này làm mặc định
-                              </p>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="flex justify-end gap-3 pt-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsDialogOpen(false)}
-                      >
-                        Hủy
-                      </Button>
-                      <Button type="submit">
-                        {editingAddress ? "Cập nhật" : "Thêm địa chỉ"}
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
+            <Button
+              onClick={() => setIsAddDialogOpen(true)}
+              disabled={isLoading}
+              className="bg-primary hover:bg-primary/90"
+              size="lg"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Thêm địa chỉ mới
+            </Button>
           </div>
-          <Separator />
+          <Separator className="bg-gray-200" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Address List */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Địa chỉ của bạn</CardTitle>
-                <CardDescription>
-                  {addresses.length} địa chỉ đã lưu
-                </CardDescription>
+        {/* Main Content */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Column - Address List */}
+          <div className="flex-1">
+            <Card className="border-none shadow-lg">
+              <CardHeader className="bg-linear-to-r from-primary/5 to-transparent">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle className="text-2xl text-gray-900">
+                      Địa chỉ của bạn
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      {isLoading
+                        ? "Đang tải địa chỉ..."
+                        : `Bạn có ${addresses?.length || 0} địa chỉ đã lưu`}
+                    </CardDescription>
+                  </div>
+                  {!isLoading && (addresses?.length || 0) > 0 && (
+                    <Badge variant="outline" className="px-3 py-1">
+                      {addresses?.length || 0} địa chỉ
+                    </Badge>
+                  )}
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {addresses.map((address) => (
-                    <Card
-                      key={address.id}
-                      className={`border-2 relative ${
-                        address.isDefault ? "border-primary" : "border-gray-200"
-                      }`}
-                    >
-                      <CardContent className="p-6">
-                        {address.isDefault && (
-                          <Badge className="absolute top-3 right-3 bg-primary">
-                            <Check className="h-3 w-3 mr-1" />
-                            Mặc định
-                          </Badge>
-                        )}
-                        <div className="space-y-4">
-                          <div className="flex items-start gap-3">
-                            <div className="p-2 bg-gray-100 rounded-lg">
-                              {address.type === "home" ? (
-                                <Home className="h-5 w-5 text-gray-600" />
-                              ) : (
-                                <Briefcase className="h-5 w-5 text-gray-600" />
-                              )}
+
+              <CardContent className="p-6">
+                {/* Loading State */}
+                {isLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <Card key={i} className="border-gray-200">
+                        <CardContent className="p-6 space-y-4">
+                          <Skeleton className="h-6 w-1/2" />
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-3/4" />
+                          <div className="flex gap-2 pt-4">
+                            <Skeleton className="h-10 flex-1" />
+                            <Skeleton className="h-10 flex-1" />
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    {/* Address List */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {addresses?.map((address) => (
+                        <Card
+                          key={address.id}
+                          className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl border-2 ${
+                            address.is_default
+                              ? "border-green-500 shadow-md"
+                              : "border-gray-200 hover:border-primary/30"
+                          }`}
+                        >
+                          {address.is_default && (
+                            <div className="absolute top-0 right-0">
+                              <Badge className="rounded-none rounded-bl-lg bg-green-500">
+                                <Check className="h-3 w-3 mr-1" />
+                                Mặc định
+                              </Badge>
                             </div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h3 className="font-semibold">{address.fullName}</h3>
-                                <Badge variant="outline">
-                                  {address.type === "home" ? "Nhà riêng" : "Văn phòng"}
-                                </Badge>
+                          )}
+
+                          <CardContent className="p-6">
+                            <div className="space-y-4">
+                              {/* Contact Info */}
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                  <User className="h-4 w-4 text-gray-500" />
+                                  <h3 className="font-bold text-lg text-gray-900">
+                                    {address.full_name}
+                                  </h3>
+                                </div>
+
+                                <div className="flex items-center gap-2 text-gray-600">
+                                  <Phone className="h-4 w-4" />
+                                  <span className="font-medium">
+                                    {address.phone}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-start gap-2 pt-2">
+                                  <Home className="h-4 w-4 text-gray-500 mt-1 shrink-0" />
+                                  <div className="text-gray-700">
+                                    <p className="font-medium mb-1">
+                                      Địa chỉ giao hàng:
+                                    </p>
+                                    <p className="text-sm">{address.details}</p>
+                                    <p className="text-sm">
+                                      {address.ward}, {address.province}
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
-                              <p className="text-sm text-gray-600 mb-1">{address.phone}</p>
-                              <p className="text-sm">
-                                {address.address}, {address.ward}, {address.district}, {address.province}
+
+                              <Separator />
+
+                              {/* Actions */}
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="flex-1 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200"
+                                  onClick={() => handleEdit(address)}
+                                >
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Chỉnh sửa
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="flex-1 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-red-500"
+                                  onClick={() => handleDelete(address.id)}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Xóa
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {/* Empty State */}
+                    {!isLoading && (addresses?.length || 0) === 0 && (
+                      <div className="text-center py-16">
+                        <div className="inline-flex p-4 bg-gray-100 rounded-full mb-6">
+                          <MapPin className="h-16 w-16 text-gray-400" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                          Chưa có địa chỉ nào
+                        </h3>
+                        <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                          Bạn chưa lưu địa chỉ giao hàng nào. Hãy thêm địa chỉ
+                          để trải nghiệm mua sắm thuận tiện hơn!
+                        </p>
+                        <Button
+                          onClick={() => setIsAddDialogOpen(true)}
+                          className="bg-primary hover:bg-primary/90"
+                          size="lg"
+                        >
+                          <Plus className="h-5 w-5 mr-2" />
+                          Thêm địa chỉ đầu tiên
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Add Address Card - Always visible when not loading */}
+                    {(addresses?.length || 0) > 0 && (
+                      <div className="mt-6">
+                        <Card
+                          className="border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer group"
+                          onClick={() => setIsAddDialogOpen(true)}
+                        >
+                          <CardContent className="p-8">
+                            <div className="flex flex-col items-center justify-center text-center">
+                              <div className="p-4 bg-primary/10 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                                <Plus className="h-8 w-8 text-primary" />
+                              </div>
+                              <h3 className="font-semibold text-lg mb-2 text-gray-900">
+                                Thêm địa chỉ mới
+                              </h3>
+                              <p className="text-gray-600 text-sm max-w-xs">
+                                Thêm địa chỉ giao hàng để có thêm lựa chọn khi
+                                đặt hàng
                               </p>
                             </div>
-                          </div>
-
-                          <Separator />
-
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="flex-1"
-                              onClick={() => handleEdit(address.id)}
-                            >
-                              <Edit className="h-3 w-3 mr-1" />
-                              Chỉnh sửa
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="flex-1"
-                              onClick={() => handleDelete(address.id)}
-                            >
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Xóa
-                            </Button>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-
-                  {/* Add New Address Card */}
-                  <Card className="border-2 border-dashed border-gray-300 hover:border-primary transition-colors">
-                    <CardContent className="p-6 flex flex-col items-center justify-center h-full min-h-50">
-                      <div className="p-3 bg-gray-100 rounded-full mb-4">
-                        <Plus className="h-6 w-6 text-gray-400" />
+                          </CardContent>
+                        </Card>
                       </div>
-                      <h3 className="font-semibold mb-2">Thêm địa chỉ mới</h3>
-                      <p className="text-sm text-gray-500 text-center mb-4">
-                        Thêm địa chỉ giao hàng mới để thuận tiện cho việc mua sắm
-                      </p>
-                      <Button variant="outline" onClick={handleAddNew}>
-                        Thêm địa chỉ
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Empty State */}
-                {addresses.length === 0 && (
-                  <div className="text-center py-12">
-                    <MapPin className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                      Chưa có địa chỉ nào
-                    </h3>
-                    <p className="text-gray-500 mb-6">
-                      Thêm địa chỉ giao hàng để bắt đầu mua sắm
-                    </p>
-                    <Button onClick={handleAddNew}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Thêm địa chỉ đầu tiên
-                    </Button>
-                  </div>
+                    )}
+                  </>
                 )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Instructions */}
-          <div className="space-y-6">
-            <Card>
+          {/* Right Column - Tips/Guide */}
+          <div className="lg:w-80 space-y-6">
+            <Card className="border-none shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">Hướng dẫn</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Check className="h-5 w-5 text-green-500" />
+                  Mẹo hữu ích
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    Địa chỉ mặc định
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Địa chỉ mặc định sẽ được tự động chọn khi bạn đặt hàng
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-blue-500" />
-                    Loại địa chỉ
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Phân loại địa chỉ giúp bạn dễ dàng quản lý hơn
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-purple-500" />
-                    Giới hạn địa chỉ
-                  </h4>
-                  <p className="text-sm text-gray-600">
-                    Bạn có thể lưu tối đa 10 địa chỉ
-                  </p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <MapPin className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm">
+                        Địa chỉ mặc định
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Đặt một địa chỉ làm mặc định để thuận tiện cho việc
+                        thanh toán nhanh.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-green-100 rounded-lg">
+                      <Check className="h-4 w-4 text-green-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm">
+                        Cập nhật thường xuyên
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Đảm bảo thông tin địa chỉ luôn chính xác để không ảnh
+                        hưởng đến quá trình giao hàng.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-purple-100 rounded-lg">
+                      <User className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm">
+                        Thêm nhiều địa chỉ
+                      </h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Lưu địa chỉ nhà, công ty hoặc người thân để linh hoạt
+                        khi đặt hàng.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            {/* Stats Card */}
+            <Card className="border-none shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">Mẹo hữu ích</CardTitle>
+                <CardTitle>Thống kê</CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5" />
-                    <span>Đảm bảo số điện thoại chính xác để nhận thông báo giao hàng</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5" />
-                    <span>Ghi rõ số nhà, tên đường để dễ dàng tìm kiếm</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full mt-1.5" />
-                    <span>Cập nhật địa chỉ thường xuyên khi có thay đổi</span>
-                  </li>
-                </ul>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Tổng địa chỉ</span>
+                    <span className="font-bold text-lg">
+                      {addresses?.length || 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">Địa chỉ mặc định</span>
+                    <span className="font-bold text-green-600">
+                      {addresses?.filter((addr) => addr.is_default).length || 0}
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <AddAddressDialog
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onSuccess={handleSuccess}
+      />
+
+      {selectedAddress && (
+        <EditAddressDialog
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          editingAddress={selectedAddress}
+          onSuccess={handleSuccess}
+        />
+      )}
     </div>
   );
 }

@@ -21,7 +21,7 @@ export function useUser() {
 }
 export const changePassword = (data: z.infer<typeof changePasswordSchema>) => {
   return axios
-    .post(`${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`, data)
+    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };

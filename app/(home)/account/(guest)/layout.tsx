@@ -10,7 +10,7 @@ export default async function GuestLayout({
   const token = cookieStore.get("access_token");
 
   if (token) {
-    redirect("/account"); 
+    redirect("/");
   }
 
   return <>{children}</>;

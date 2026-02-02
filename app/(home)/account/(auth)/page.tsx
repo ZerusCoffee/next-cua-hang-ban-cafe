@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { updateAvatar, useUser } from "@/services/user";
+import { getAvatarUrl } from "@/utils/avatar";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import dayjs from "dayjs";
@@ -87,9 +88,7 @@ export default function AccountPage() {
                       <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
                     </div>
                   ) : (
-                    <AvatarImage
-                      src={user?.avatar || "/assets/svg/default-avatar.png"}
-                    />
+                    <AvatarImage src={getAvatarUrl(user?.avatar)} />
                   )}
                 </Avatar>
 
@@ -97,7 +96,7 @@ export default function AccountPage() {
                 <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <Camera className="h-6 w-6 text-white" />
                 </div>
-                
+
                 {isDragActive && (
                   <div className="absolute inset-0 bg-blue-500/70 rounded-full flex items-center justify-center">
                     <p className="text-white text-sm font-medium">
@@ -131,7 +130,7 @@ export default function AccountPage() {
                   {user?.created_at && (
                     <Badge
                       variant="secondary"
-                      className=" bg-blue-500 text-white border-0"
+                      className=" bg-amber-600 text-white border-0"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Thành viên từ {dayjs(user.created_at).format("MM/YYYY")}

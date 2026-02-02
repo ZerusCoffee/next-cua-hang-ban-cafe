@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { changePassword } from "@/services/user";
 import { changePasswordSchema } from "@/validation/userSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -38,10 +39,13 @@ export function ChangePasswordForm({
     formState: { isSubmitting },
   } = form;
 
+  const router = useRouter();
+
   const onSubmit = async (data: ChangePasswordFormData) => {
     const res = await changePassword(data);
-    if (res.success) {
+    if (res.status === "success") {
       toast.success("Đổi mật khẩu thành công");
+      router.push("/account");
       form.reset();
     } else {
       toast.error(res.message);

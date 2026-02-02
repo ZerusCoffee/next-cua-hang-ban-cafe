@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { removeJWTfromCookie } from "@/lib/cookie";
 import { useUser } from "@/services/user";
+import { getAvatarUrl } from "@/utils/avatar";
 import {
   Dialog,
   DialogPanel,
@@ -90,6 +91,7 @@ export function Header() {
 
   const handleLogout = () => {
     removeJWTfromCookie();
+    router.push("/");
     mutate(null);
   };
 
@@ -140,7 +142,7 @@ export function Header() {
                       <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                     </svg>
                   </div>
-                  <span className="text-sm font-semibold text-amber-600 tracking-[0.2em] uppercase mt-[-4px] border-t border-amber-200 pt-1">
+                  <span className="text-sm font-semibold text-amber-600 tracking-[0.2em] uppercase -mt-1 border-t border-amber-200 pt-1">
                     Vintage Coffee
                   </span>
                 </div>
@@ -285,7 +287,7 @@ export function Header() {
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">
                       <AvatarImage
-                        src={user?.avatar || "/assets/svg/default-avatar.png"}
+                        src={getAvatarUrl(user?.avatar)}
                         alt={user?.name}
                       />
                       <AvatarFallback className="bg-amber-100 text-amber-800">
@@ -497,10 +499,7 @@ export function Header() {
                       <div className="flex items-center space-x-3 p-4 rounded-lg bg-amber-50">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
-                            src={
-                              user?.avatar ||
-                              "/assets/images/default-avatar.png"
-                            }
+                            src={getAvatarUrl(user?.avatar)}
                             alt={user?.name}
                           />
                           <AvatarFallback className="bg-amber-100 text-amber-800">
