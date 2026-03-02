@@ -1,4 +1,6 @@
+import BannerCarousel from "./banner-slider";
 import { Metadata } from "next";
+import MarqueeText from "./marquee-text";
 
 export const metadata: Metadata = {
   title: "Trang chủ | Zerus Coffee",
@@ -7,8 +9,8 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div>
-      <h1>Welcome to our Cafe!</h1>
-      <p>We offer a variety of delicious coffee drinks and pastries.</p>
+      <BannerCarousel />
+      <MarqueeText />
     </div>
   );
 }
