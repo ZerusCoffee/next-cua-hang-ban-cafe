@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 
 import { removeJWTfromCookie } from "@/lib/cookie";
 import { useUser } from "@/services/user";
+import { getAvatarUrl } from "@/utils/avatar";
 import {
   Dialog,
   DialogPanel,
@@ -158,6 +159,7 @@ export function Header() {
 
   const handleLogout = () => {
     removeJWTfromCookie();
+    router.push("/");
     mutate(null);
   };
 
@@ -357,7 +359,7 @@ export function Header() {
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">
                       <AvatarImage
-                        src={user?.avatar || "/assets/svg/default-avatar.png"}
+                        src={getAvatarUrl(user?.avatar)}
                         alt={user?.name}
                       />
                       <AvatarFallback className="bg-amber-100 text-amber-800">
@@ -415,6 +417,21 @@ export function Header() {
                               }`}
                           >
                             Sổ Địa Chỉ
+                          </Link>
+                        )}
+                      </MenuItem>
+
+                      <MenuItem>
+                        {({ active }) => (
+                          <Link
+                            href="/account/coupons"
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            Mã giảm giá
                           </Link>
                         )}
                       </MenuItem>
@@ -565,10 +582,7 @@ export function Header() {
                       <div className="flex items-center space-x-3 p-4 rounded-lg bg-amber-50">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
-                            src={
-                              user?.avatar ||
-                              "/assets/images/default-avatar.png"
-                            }
+                            src={getAvatarUrl(user?.avatar)}
                             alt={user?.name}
                           />
                           <AvatarFallback className="bg-amber-100 text-amber-800">
@@ -603,6 +617,13 @@ export function Header() {
                           className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
                         >
                           Sổ địa chỉ
+                        </Link>
+                        <Link
+                          href="/account/coupons"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
+                        >
+                          Mã giảm giá
                         </Link>
                         <button
                           onClick={() => {

@@ -21,7 +21,7 @@ export function useUser() {
 }
 export const changePassword = (data: z.infer<typeof changePasswordSchema>) => {
   return axios
-    .post(`${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`, data)
+    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };
@@ -29,6 +29,13 @@ export const changePassword = (data: z.infer<typeof changePasswordSchema>) => {
 export const updateProfile = (data: z.infer<typeof updateProfileSchema>) => {
   return axios
     .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, data)
+    .then((res) => res.data)
+    .catch((error: AxiosError) => error.response?.data);
+};
+
+export const updateAvatar = (data: FormData) => {
+  return axios
+    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/avatar`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };

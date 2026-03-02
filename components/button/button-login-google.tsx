@@ -13,12 +13,13 @@ export const ButtonLoginGoogle = () => {
   const googleLogin = useGoogleLogin({
     onSuccess: async ({ code }) => {
       const response = await loginGoogle(code);
-      console.log("Res: ", response);
       if (response.status == "success" && response?.data?.access_token) {
         await setJWTtoCookie(response.data.access_token);
         toast.success("Đăng nhập thành công");
         mutate();
         route.push("/");
+      } else {
+        toast.error(response.message);
       }
     },
     flow: "auth-code",

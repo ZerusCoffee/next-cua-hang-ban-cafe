@@ -12,32 +12,79 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useUser } from "@/services/user";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAddress } from "@/services/address";
+import { updateAvatar, useUser } from "@/services/user";
+import { getAvatarUrl } from "@/utils/avatar";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import dayjs from "dayjs";
+import "dayjs/locale/vi";
 import {
   Bell,
   Camera,
   CheckCircle,
   Clock,
   CreditCard,
+  Home,
   Mail,
   MapPin,
   Package,
+  Phone,
+  Plus,
   Shield,
+  Ticket,
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
 
 export default function AccountPage() {
-  const { user } = useUser();
+  const { user, mutate } = useUser();
+  const { addresses } = useAddress();
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleAvatarClick = () => {
-    toast.info("Avatar clicked - open file picker"); // Sai react-dropzone
-  };
+  // Tải và xử lý hình ảnh đại diện
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      if (!file) return;
 
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      try {
+        setIsUploading(true);
+        await updateAvatar(formData);
+        toast.success("Cập nhật ảnh đại diện thành công!");
+        mutate();
+      } catch {
+        toast.error("Upload thất bại");
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [mutate],
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
+    },
+    maxFiles: 1,
+    maxSize: 5 * 1024 * 1024, // 5MB
+    disabled: isUploading,
+  });
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
       {/* Hero Header */}
@@ -45,19 +92,33 @@ export default function AccountPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-              <div className="relative group">
-                <div className="cursor-pointer" onClick={handleAvatarClick}>
-                  <Avatar className="h-20 w-20 border-4 border-white/30 group-hover:border-blue-400 transition-all duration-200">
-                    <AvatarImage
-                      src={user?.avatar || "/assets/svg/default-avatar.png"}
-                    />
-                  </Avatar>
+              <div
+                {...getRootProps()}
+                className="relative group cursor-pointer"
+              >
+                <input {...getInputProps()} />
+                <Avatar className="h-20 w-20 border-4 border-white/30 group-hover:border-blue-400 transition-all duration-200">
+                  {isUploading ? (
+                    <div className="flex items-center justify-center h-full w-full bg-black/50 rounded-full">
+                      <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent"></div>
+                    </div>
+                  ) : (
+                    <AvatarImage src={getAvatarUrl(user?.avatar)} />
+                  )}
+                </Avatar>
 
-                  {/* Overlay khi hover */}
-                  <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <Camera className="h-6 w-6 text-white" />
-                  </div>
+                {/* Overlay khi hover */}
+                <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <Camera className="h-6 w-6 text-white" />
                 </div>
+
+                {isDragActive && (
+                  <div className="absolute inset-0 bg-blue-500/70 rounded-full flex items-center justify-center">
+                    <p className="text-white text-sm font-medium">
+                      Thả ảnh vào đây
+                    </p>
+                  </div>
+                )}
               </div>
               <div>
                 <h1 className="text-3xl font-bold">
@@ -84,7 +145,7 @@ export default function AccountPage() {
                   {user?.created_at && (
                     <Badge
                       variant="secondary"
-                      className=" bg-blue-500 text-white border-0"
+                      className=" bg-amber-600 text-white border-0"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Thành viên từ {dayjs(user.created_at).format("MM/YYYY")}
@@ -137,6 +198,15 @@ export default function AccountPage() {
                   >
                     <MapPin className="h-5 w-5" />
                     Sổ địa chỉ
+                  </Link>
+
+                  <Link
+                    href="/account/coupons"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+                  >
+                    <Ticket className="h-5 w-5" />
+                    Mã giảm giá của tôi
+                    <Badge className="ml-auto bg-orange-500">5</Badge>
                   </Link>
 
                   <Link
@@ -275,7 +345,7 @@ export default function AccountPage() {
 
               {/* Security & Address Quick Actions */}
               <div className="space-y-6">
-                {/* Address Card */}
+                {/* Address Card - Updated with Table */}
                 <Card className="border shadow-lg">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
@@ -286,65 +356,151 @@ export default function AccountPage() {
                         <div>
                           <CardTitle>Địa chỉ giao hàng</CardTitle>
                           <CardDescription>
-                            Thêm địa chỉ nhận hàng
+                            Quản lý địa chỉ nhận hàng
                           </CardDescription>
                         </div>
                       </div>
-                      <Badge variant="outline">0 địa chỉ</Badge>
+                      <div className="flex items-center gap-4">
+                        <Badge variant="outline">
+                          {addresses?.length || 0} địa chỉ
+                        </Badge>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="p-4 border-2 border-dashed border-gray-200 rounded-lg text-center">
-                      <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-500 mb-4">
-                        Bạn chưa thêm địa chỉ giao hàng nào
-                      </p>
-                      <Button className="w-full" asChild>
-                        <Link href="/account/address/new">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          Thêm địa chỉ mới
-                        </Link>
-                      </Button>
-                    </div>
+                    {addresses && addresses.length > 0 ? (
+                      <div className="rounded-lg border">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-muted/50">
+                              <TableHead className="w-45">Người nhận</TableHead>
+                              <TableHead className="w-30">Điện thoại</TableHead>
+                              <TableHead>Địa chỉ</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {addresses.map((address) => (
+                              <TableRow
+                                key={address.id}
+                                className={
+                                  address.is_default ? "bg-blue-50/50" : ""
+                                }
+                              >
+                                <TableCell>
+                                  <div className="font-medium">
+                                    {address.full_name}
+                                  </div>
+                                  {address.is_default && (
+                                    <Badge
+                                      variant="secondary"
+                                      className="mt-1 bg-green-100 text-green-800 text-xs"
+                                    >
+                                      <CheckCircle className="h-3 w-3 mr-1" />
+                                      Mặc định
+                                    </Badge>
+                                  )}
+                                </TableCell>
+
+                                <TableCell>
+                                  <div className="flex items-center">
+                                    <Phone className="h-3 w-3 mr-2 text-gray-400" />
+                                    {address.phone}
+                                  </div>
+                                </TableCell>
+
+                                <TableCell>
+                                  <div className="space-y-1">
+                                    <div className="flex items-start">
+                                      <Home className="h-3 w-3 mr-2 text-gray-400 mt-0.5" />
+                                      <span className="text-sm">
+                                        {address.details}
+                                      </span>
+                                    </div>
+                                    <div className="text-gray-600 text-xs ml-5">
+                                      {address.ward}, {address.province}
+                                    </div>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    ) : (
+                      <div className="p-8 border-2 border-dashed border-gray-200 rounded-lg text-center">
+                        <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500 mb-4">
+                          Bạn chưa thêm địa chỉ giao hàng nào
+                        </p>
+                        <Button className="w-full" asChild>
+                          <Link href="/account/address/new">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Thêm địa chỉ mới
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+
+                    {addresses &&
+                      addresses.length > 0 &&
+                      addresses.length < 3 && (
+                        <div className="mt-4 text-center">
+                          <Button variant="outline" className="w-full" asChild>
+                            <Link href="/account/address">
+                              <MapPin className="h-4 w-4 mr-2" />
+                              Xem tất cả địa chỉ ({addresses.length})
+                            </Link>
+                          </Button>
+                        </div>
+                      )}
                   </CardContent>
                 </Card>
 
-                {/* Security Card */}
                 <Card className="border shadow-lg">
                   <CardHeader className="pb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <Shield className="h-5 w-5 text-green-600" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-100 rounded-lg">
+                          <Ticket className="h-5 w-5 text-orange-600" />
+                        </div>
+                        <div>
+                          <CardTitle>Mã giảm giá</CardTitle>
+                          <CardDescription>
+                            Quản lý mã giảm giá của bạn
+                          </CardDescription>
+                        </div>
                       </div>
-                      <div>
-                        <CardTitle>Bảo mật tài khoản</CardTitle>
-                        <CardDescription>
-                          Bảo vệ tài khoản của bạn
-                        </CardDescription>
-                      </div>
+                      <Badge
+                        variant="outline"
+                        className="bg-orange-50 text-orange-700"
+                      >
+                        3 mã sắp hết hạn
+                      </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="p-4 bg-gray-50 rounded-lg border">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium">Mật khẩu</h4>
-                          <Badge
-                            variant="outline"
-                            className="bg-yellow-50 text-yellow-700"
-                          >
-                            Cần cập nhật
+                      <div className="p-4 bg-linear-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-green-100 text-green-800">
+                              -20%
+                            </Badge>
+                            <span className="font-mono font-bold text-lg">
+                              WELCOME2024
+                            </span>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            Còn 5 ngày
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-500 mb-4">
-                          Đã 90 ngày chưa đổi mật khẩu
+                        <p className="text-sm text-gray-600 mb-3">
+                          Giảm 20% cho đơn hàng đầu tiên, áp dụng tối đa 100k
                         </p>
-                        <Button className="w-full" variant="outline" asChild>
-                          <Link href="/account/security/change-password">
-                            <Shield className="h-4 w-4 mr-2" />
-                            Đổi mật khẩu ngay
-                          </Link>
-                        </Button>
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <span>HSD: 31/12/2024</span>
+                          <span>Đã sử dụng: 0/1</span>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -353,13 +509,13 @@ export default function AccountPage() {
                           className="h-auto py-3"
                           asChild
                         >
-                          <Link href="/account/security/devices">
+                          <Link href="/account/coupons">
                             <div className="text-left">
                               <p className="font-medium text-sm">
-                                Thiết bị đăng nhập
+                                Xem tất cả mã
                               </p>
                               <p className="text-xs text-gray-500">
-                                2 thiết bị
+                                5 mã đang có
                               </p>
                             </div>
                           </Link>
@@ -370,12 +526,14 @@ export default function AccountPage() {
                           className="h-auto py-3"
                           asChild
                         >
-                          <Link href="/account/security/2fa">
+                          <Link href="/coupons">
                             <div className="text-left">
                               <p className="font-medium text-sm">
-                                Xác thực 2 lớp
+                                Nhận thêm mã
                               </p>
-                              <p className="text-xs text-gray-500">Chưa bật</p>
+                              <p className="text-xs text-gray-500">
+                                Khuyến mãi mới
+                              </p>
                             </div>
                           </Link>
                         </Button>
@@ -386,7 +544,7 @@ export default function AccountPage() {
               </div>
             </div>
 
-            {/* Quick Stats */}
+            {/* Quick Stats - Cập nhật số địa chỉ */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Card className="border shadow-sm">
                 <CardContent className="p-6">
@@ -405,12 +563,14 @@ export default function AccountPage() {
               <Card className="border shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-100 rounded-lg">
-                      <CheckCircle className="h-6 w-6 text-green-600" />
+                    <div className="p-3 bg-yellow-100 rounded-lg">
+                      <MapPin className="h-6 w-6 text-yellow-600" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">2</p>
-                      <p className="text-sm text-gray-500">Đã giao</p>
+                      <p className="text-2xl font-bold">
+                        {addresses?.length || 0}
+                      </p>
+                      <p className="text-sm text-gray-500">Địa chỉ</p>
                     </div>
                   </div>
                 </CardContent>
@@ -419,12 +579,12 @@ export default function AccountPage() {
               <Card className="border shadow-sm">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-yellow-100 rounded-lg">
-                      <MapPin className="h-6 w-6 text-yellow-600" />
+                    <div className="p-3 bg-orange-100 rounded-lg">
+                      <Ticket className="h-6 w-6 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold">0</p>
-                      <p className="text-sm text-gray-500">Địa chỉ</p>
+                      <p className="text-2xl font-bold">5</p>
+                      <p className="text-sm text-gray-500">Mã giảm giá</p>
                     </div>
                   </div>
                 </CardContent>
