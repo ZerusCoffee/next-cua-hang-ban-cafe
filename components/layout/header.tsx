@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { removeJWTfromCookie } from "@/lib/cookie";
 import { useUser } from "@/services/user";
@@ -19,6 +19,9 @@ import { useRouter } from "next/navigation";
 import { If } from "react-haiku";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
+import { useGSAP } from "@gsap/react"
+import { gsap, ScrollTrigger } from "@/lib/gsap";
+
 
 // SVG Icons
 const SearchIcon = ({ className }: { className?: string }) => (
@@ -74,9 +77,8 @@ const CloseIcon = ({ className }: { className?: string }) => (
 
 const navigation = [
   { name: "Trang chủ", href: "/" },
-  { name: "Thực đơn", href: "/menu" },
+  { name: "Sản phẩm", href: "/products" },
   { name: "Khuyến mãi", href: "/promotions" },
-  { name: "Cửa hàng", href: "/stores" },
   { name: "Tin tức", href: "/news" },
 ];
 
@@ -87,6 +89,72 @@ export function Header() {
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const { user, isLoading, mutate } = useUser();
   const router = useRouter();
+  const headerRef = useRef<HTMLElement>(null)
+  const linkRef = useRef<HTMLElement>(null)
+  const buttonRef = useRef<HTMLDivElement>(null)
+
+
+  useGSAP(() => {
+    if (!headerRef.current || !linkRef.current || !buttonRef.current) return;
+
+    const navLinks = linkRef.current
+    const navButtons = buttonRef.current.querySelectorAll('.animate-btn')
+
+    ScrollTrigger.create({
+      trigger: headerRef.current,
+      start: 'bottom top',
+      end: 'top top',
+      toggleActions: 'play reverse play reverse',
+      onEnter: () => {
+        // Cả thanh navbar
+        gsap.to(headerRef.current, {
+          backgroundColor: 'white',
+          backdropFilter: 'blur(10px)',
+          duration: 0.3,
+          ease: 'power1.inOut',
+        });
+
+        // Các thẻ Link
+        gsap.to(navLinks, {
+          color: '#374151', // text-gray-700
+          duration: 0.3,
+          ease: 'power2.inOut',
+          stagger: 0.03,
+        });
+
+        // Các button
+        gsap.to(navButtons, {
+          color: '#374151', // text-gray-700
+          duration: 0.3,
+          ease: 'power2.inOut',
+          stagger: 0.03,
+        });
+      },
+      onLeaveBack: () => {
+        gsap.to(headerRef.current, {
+          backgroundColor: 'transparent',
+          backdropFilter: 'blur(0px)',
+          duration: 0.3,
+          ease: 'power1.inOut',
+        });
+
+        gsap.to(navLinks, {
+          color: 'white',
+          duration: 0.3,
+          ease: 'power2.inOut',
+          stagger: 0.03,
+        });
+
+        gsap.to(navButtons, {
+          color: 'white',
+          duration: 0.3,
+          ease: 'power2.inOut',
+          stagger: 0.03,
+        });
+      },
+    });
+
+  }, []);
 
   const handleLogout = () => {
     removeJWTfromCookie();
@@ -106,7 +174,9 @@ export function Header() {
   return (
     <>
       {/* Header chính */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/80 shadow-sm">
+      <header
+        ref={headerRef}
+        className="fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 bg-transparent">
         {/* Container với padding-bottom để tạo khoảng cách */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
@@ -140,7 +210,7 @@ export function Header() {
                       <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                     </svg>
                   </div>
-                  <span className="text-sm font-semibold text-amber-600 tracking-[0.2em] uppercase mt-[-4px] border-t border-amber-200 pt-1">
+                  <span className="text-sm font-semibold text-amber-600 tracking-[0.2em] uppercase -mt-1 border-t border-amber-200 pt-1">
                     Vintage Coffee
                   </span>
                 </div>
@@ -149,13 +219,14 @@ export function Header() {
 
             {/* Navigation desktop - ẩn khi ở chế độ tìm kiếm */}
             <nav
-              className={`hidden md:flex items-center space-x-8 ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+              ref={linkRef}
+              className={`hidden md:flex items-center space-x-8 animate-link text-white ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
             >
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-amber-700 font-medium transition-colors"
+                  className=" hover:text-amber-700 font-semibold transition-colors"
                 >
                   {item.name}
                 </Link>
@@ -166,7 +237,7 @@ export function Header() {
             {searchMode && (
               <div className="absolute inset-0 flex items-center justify-center px-4 sm:px-6 lg:px-12">
                 <form onSubmit={handleSearch} className="w-full max-w-2xl">
-                  <div className="relative flex items-center">
+                  <div className="relative flex items-center" >
                     <div className="relative flex-1">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <SearchIcon className="h-5 w-5 text-gray-400" />
@@ -185,7 +256,7 @@ export function Header() {
                     <button
                       type="button"
                       onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
-                      className={`hidden md:block ml-2 p-3 rounded-xl border ${showAdvancedFilter ? "bg-amber-100 border-amber-500 text-amber-700" : "border-gray-300 text-gray-700 hover:bg-gray-100"}`}
+                      className={`hidden bg-white md:block ml-2 p-3 rounded-xl border animate-search ${showAdvancedFilter ? "bg-amber-100 border-amber-500 text-amber-700" : "border-gray-300 text-gray-700 hover:bg-gray-100"}`}
                     >
                       <FilterIcon className="h-5 w-5" />
                     </button>
@@ -198,7 +269,7 @@ export function Header() {
                         setSearchQuery("");
                         setShowAdvancedFilter(false);
                       }}
-                      className="ml-2 p-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      className="ml-2 p-3 rounded-xl border bg-white border-gray-300 text-gray-700 hover:bg-gray-100 animate-search"
                     >
                       <CloseIcon className="h-5 w-5" />
                     </button>
@@ -266,12 +337,13 @@ export function Header() {
 
             {/* User actions - ẩn khi ở chế độ tìm kiếm */}
             <div
+              ref={buttonRef}
               className={`flex items-center space-x-4 ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
             >
               {/* Nút tìm kiếm (chỉ hiện trên desktop khi không ở chế độ tìm kiếm) */}
               <button
                 onClick={() => setSearchMode(true)}
-                className="hidden md:block p-2 rounded-lg hover:bg-gray-100 text-gray-700 cursor-pointer"
+                className="hidden md:block p-2 rounded-lg hover:bg-amber-700 text-white cursor-pointer animate-btn"
               >
                 <SearchIcon className="h-5 w-5" />
               </button>
@@ -311,11 +383,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Hồ sơ của tôi
                           </Link>
@@ -325,11 +396,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/orders"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Đơn hàng
                           </Link>
@@ -339,11 +409,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/address"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Sổ Địa Chỉ
                           </Link>
@@ -355,9 +424,8 @@ export function Header() {
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
-                            className={`block w-full text-left px-4 py-2 text-sm ${
-                              active ? "bg-red-50 text-red-600" : "text-red-500"
-                            }`}
+                            className={`block w-full text-left px-4 py-2 text-sm ${active ? "bg-red-50 text-red-600" : "text-red-500"
+                              }`}
                           >
                             Đăng xuất
                           </button>
@@ -372,7 +440,8 @@ export function Header() {
                 <div className="hidden md:flex items-center space-x-3">
                   <button
                     onClick={() => router.push("/account/login")}
-                    className="text-gray-700 hover:text-amber-700 font-medium transition-colors cursor-pointer"
+                    data-login-btn
+                    className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
                   >
                     Đăng nhập
                   </button>
@@ -397,7 +466,6 @@ export function Header() {
         </div>
 
         {/* Gradient spacer để tạo khoảng cách */}
-        <div className="h-2 bg-linear-to-b from-white to-transparent"></div>
       </header>
 
       {/* Mobile menu */}
