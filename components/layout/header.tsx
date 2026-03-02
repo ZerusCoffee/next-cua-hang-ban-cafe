@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
 import { useGSAP } from "@gsap/react"
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { usePathname } from "next/navigation";
 
 
 // SVG Icons
@@ -95,67 +96,65 @@ export function Header() {
   const buttonRef = useRef<HTMLDivElement>(null)
 
 
+  const pathname = usePathname();
+  const isHome = pathname === '/'
+
   useGSAP(() => {
+    // Kill tất cả ScrollTrigger cũ
+    ScrollTrigger.getAll().forEach(t => t.kill());
+
     if (!headerRef.current || !linkRef.current || !buttonRef.current) return;
 
-    const navLinks = linkRef.current
-    const navButtons = buttonRef.current.querySelectorAll('.animate-btn')
+    const navButtons = buttonRef.current.querySelectorAll('.animate-btn');
 
-    ScrollTrigger.create({
-      trigger: headerRef.current,
-      start: 'bottom top',
-      end: 'top top',
-      toggleActions: 'play reverse play reverse',
-      onEnter: () => {
-        // Cả thanh navbar
-        gsap.to(headerRef.current, {
-          backgroundColor: 'white',
-          backdropFilter: 'blur(10px)',
-          duration: 0.3,
-          ease: 'power1.inOut',
-        });
+    if (isHome) {
+      gsap.set(headerRef.current, {
+        backgroundColor: 'transparent',
+        backdropFilter: 'blur(0px)',
+      });
+      gsap.set([linkRef.current, navButtons], { color: 'white' });
 
-        // Các thẻ Link
-        gsap.to(navLinks, {
-          color: '#374151', // text-gray-700
-          duration: 0.3,
-          ease: 'power2.inOut',
-          stagger: 0.03,
-        });
+      const trigger = ScrollTrigger.create({
+        trigger: headerRef.current,
+        start: 'bottom top',
+        end: 'top top',
+        toggleActions: 'play reverse play reverse',
+        onEnter: () => {
+          gsap.to(headerRef.current, {
+            backgroundColor: 'white',
+            backdropFilter: 'blur(10px)',
+            duration: 0.3,
+          });
+          gsap.to([linkRef.current, navButtons], {
+            color: '#374151',
+            duration: 0.3,
+            stagger: 0.03,
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(headerRef.current, {
+            backgroundColor: 'transparent',
+            backdropFilter: 'blur(0px)',
+            duration: 0.3,
+          });
+          gsap.to([linkRef.current, navButtons], {
+            color: 'white',
+            duration: 0.3,
+            stagger: 0.03,
+          });
+        },
+      });
 
-        // Các button
-        gsap.to(navButtons, {
-          color: '#374151', // text-gray-700
-          duration: 0.3,
-          ease: 'power2.inOut',
-          stagger: 0.03,
-        });
-      },
-      onLeaveBack: () => {
-        gsap.to(headerRef.current, {
-          backgroundColor: 'transparent',
-          backdropFilter: 'blur(0px)',
-          duration: 0.3,
-          ease: 'power1.inOut',
-        });
-
-        gsap.to(navLinks, {
-          color: 'white',
-          duration: 0.3,
-          ease: 'power2.inOut',
-          stagger: 0.03,
-        });
-
-        gsap.to(navButtons, {
-          color: 'white',
-          duration: 0.3,
-          ease: 'power2.inOut',
-          stagger: 0.03,
-        });
-      },
-    });
-
-  }, []);
+      return () => trigger.kill();
+    } else {
+ 
+      gsap.set(headerRef.current, {
+        backgroundColor: 'white',
+        backdropFilter: 'blur(10px)',
+      });
+      gsap.set([linkRef.current, navButtons], { color: '#374151' });
+    }
+  }, { dependencies: [isHome] });
 
   const handleLogout = () => {
     removeJWTfromCookie();
@@ -178,7 +177,7 @@ export function Header() {
       {/* Header chính */}
       <header
         ref={headerRef}
-        className="fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 bg-transparent">
+        className={`fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 ${isHome ? 'bg-transparent' : 'bg-white'} `}>
         {/* Container với padding-bottom để tạo khoảng cách */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
@@ -222,7 +221,7 @@ export function Header() {
             {/* Navigation desktop - ẩn khi ở chế độ tìm kiếm */}
             <nav
               ref={linkRef}
-              className={`hidden md:flex items-center space-x-8 animate-link text-white ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+              className={`hidden md:flex items-center space-x-8 animate-link ${isHome ? 'text-white' : 'text-gray-700'} ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
             >
               {navigation.map((item) => (
                 <Link
@@ -425,11 +424,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/coupons"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Mã giảm giá
                           </Link>
@@ -456,14 +454,14 @@ export function Header() {
               <If isTrue={!user && !isLoading}>
                 <div className="hidden md:flex items-center space-x-3">
                   <button
-                    onClick={() => router.push("/account/login")}
+                    onClick={() => router.push("/login")}
                     data-login-btn
                     className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
                   >
                     Đăng nhập
                   </button>
                   <button
-                    onClick={() => router.push("/account/register")}
+                    onClick={() => router.push("/register")}
                     className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer"
                   >
                     Đăng ký
@@ -483,10 +481,10 @@ export function Header() {
         </div>
 
         {/* Gradient spacer để tạo khoảng cách */}
-      </header>
+      </header >
 
       {/* Mobile menu */}
-      <Dialog
+      < Dialog
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
         className="md:hidden"
@@ -665,7 +663,7 @@ export function Header() {
             </div>
           </DialogPanel>
         </div>
-      </Dialog>
+      </Dialog >
     </>
   );
 }
