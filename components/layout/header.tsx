@@ -352,6 +352,21 @@ export function Header() {
                         )}
                       </MenuItem>
 
+                      <MenuItem>
+                        {({ active }) => (
+                          <Link
+                            href="/account/coupons"
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            Mã giảm giá
+                          </Link>
+                        )}
+                      </MenuItem>
+
                       <div className="border-t border-gray-100 my-1"></div>
                       <MenuItem>
                         {({ active }) => (
@@ -534,6 +549,13 @@ export function Header() {
                           className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
                         >
                           Sổ địa chỉ
+                        </Link>
+                        <Link
+                          href="/account/coupons"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="block px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100"
+                        >
+                          Mã giảm giá
                         </Link>
                         <button
                           onClick={() => {
