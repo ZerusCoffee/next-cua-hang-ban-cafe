@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { removeJWTfromCookie } from "@/lib/cookie";
 import { useUser } from "@/services/user";
@@ -16,13 +16,10 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { If } from "react-haiku";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
-import { useGSAP } from "@gsap/react"
-import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { usePathname } from "next/navigation";
 
 
 // SVG Icons
@@ -99,62 +96,47 @@ export function Header() {
   const pathname = usePathname();
   const isHome = pathname === '/'
 
-  useGSAP(() => {
-    // Kill tất cả ScrollTrigger cũ
-    ScrollTrigger.getAll().forEach(t => t.kill());
-
+  useEffect(() => {
     if (!headerRef.current || !linkRef.current || !buttonRef.current) return;
 
-    const navButtons = buttonRef.current.querySelectorAll('.animate-btn');
+    const navButtons =
+      buttonRef.current.querySelectorAll<HTMLElement>(".animate-btn");
 
-    if (isHome) {
-      gsap.set(headerRef.current, {
-        backgroundColor: 'transparent',
-        backdropFilter: 'blur(0px)',
-      });
-      gsap.set([linkRef.current, navButtons], { color: 'white' });
+    const setHomeInitial = () => {
+      headerRef.current!.style.backgroundColor = "transparent";
+      headerRef.current!.style.backdropFilter = "blur(0px)";
+      linkRef.current!.style.color = "white";
+      navButtons.forEach(btn => (btn.style.color = "white"));
+    };
 
-      const trigger = ScrollTrigger.create({
-        trigger: headerRef.current,
-        start: 'bottom top',
-        end: 'top top',
-        toggleActions: 'play reverse play reverse',
-        onEnter: () => {
-          gsap.to(headerRef.current, {
-            backgroundColor: 'white',
-            backdropFilter: 'blur(10px)',
-            duration: 0.3,
-          });
-          gsap.to([linkRef.current, navButtons], {
-            color: '#374151',
-            duration: 0.3,
-            stagger: 0.03,
-          });
-        },
-        onLeaveBack: () => {
-          gsap.to(headerRef.current, {
-            backgroundColor: 'transparent',
-            backdropFilter: 'blur(0px)',
-            duration: 0.3,
-          });
-          gsap.to([linkRef.current, navButtons], {
-            color: 'white',
-            duration: 0.3,
-            stagger: 0.03,
-          });
-        },
-      });
+    const setScrolled = () => {
+      headerRef.current!.style.backgroundColor = "white";
+      headerRef.current!.style.backdropFilter = "blur(10px)";
+      linkRef.current!.style.color = "#374151";
+      navButtons.forEach(btn => (btn.style.color = "#374151"));
+    };
 
-      return () => trigger.kill();
-    } else {
- 
-      gsap.set(headerRef.current, {
-        backgroundColor: 'white',
-        backdropFilter: 'blur(10px)',
-      });
-      gsap.set([linkRef.current, navButtons], { color: '#374151' });
+    if (!isHome) {
+      setScrolled();
+      return;
     }
-  }, { dependencies: [isHome] });
+
+    const handleScroll = () => {
+      if (window.scrollY > 70) {
+        setScrolled();
+      } else {
+        setHomeInitial();
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isHome]);
 
   const handleLogout = () => {
     removeJWTfromCookie();
@@ -177,7 +159,7 @@ export function Header() {
       {/* Header chính */}
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 ${isHome ? 'bg-transparent' : 'bg-white'} `}>
+        className={`fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 transition-all duration-400 ease-in-out ${isHome ? 'bg-transparent' : 'bg-white'} `}>
         {/* Container với padding-bottom để tạo khoảng cách */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
