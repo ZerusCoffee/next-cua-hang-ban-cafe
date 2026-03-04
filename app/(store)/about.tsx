@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -25,7 +24,7 @@ export default function About() {
                     ease: "power3.out",
                     scrollTrigger: {
                         trigger: el,
-                        start: "top bottom-=150",
+                        start: "top bottom",
                         end: "bottom center",
                         toggleActions: "play none none reverse",
                     },
@@ -45,16 +44,7 @@ export default function About() {
     return (
         <main className="bg-white">
             {/* Text Section */}
-            <section className="relative h-screen flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/images/coffee-beans-bg.jpg"
-                        alt="Coffee beans background"
-                        fill
-                        className="object-cover opacity-20"
-                    />
-                </div>
-
+            <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
                 <div className="relative z-10 text-center px-4">
                     <h1
                         ref={setTextRef(0)}
