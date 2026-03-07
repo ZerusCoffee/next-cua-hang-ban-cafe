@@ -4,6 +4,7 @@ import { SWRProvider } from "@/components/provider/swr-provider";
 import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 import "./globals.css";
+import LayoutWrapper from "@/components/layout/layout-wrapper";
 
 export const metadata: Metadata = {
   title: "Zerus Coffee",
@@ -21,7 +22,7 @@ export default function RootLayout({
         <SWRProvider>
           <div className="relative flex min-h-screen flex-col">
             <Header />
-            <main className="flex-1">{children}</main>
+            <LayoutWrapper>{children}</LayoutWrapper>
             <Footer />
           </div>
           <Toaster />
