@@ -43,13 +43,12 @@ export default function BannerCarousel() {
                 <CarouselContent>
                     {banners.map((banner) => (
                         <CarouselItem key={banner.id} className="basis-full p-0">
-                            <div className="relative w-full">
+                            <div className="relative w-full h-85 md:h-200">
                                 <Image
                                     src={banner.image}
                                     alt={banner.alt}
-                                    width={banner.width}
-                                    height={banner.height}
-                                    className="w-full h-full object-contain"
+                                    fill
+                                    className="object-cover"
                                     priority={banner.id === 1}
                                 />
                             </div>

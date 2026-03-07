@@ -44,7 +44,7 @@ export default function About() {
     return (
         <main className="bg-white">
             {/* Text Section */}
-            <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+            <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
                 <div className="relative z-10 text-center px-4">
                     <h1
                         ref={setTextRef(0)}
@@ -72,7 +72,7 @@ export default function About() {
                 </div>
 
                 {/* Scroll indicator */}
-                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+                <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:inline ">
                     <div className="w-6 h-10 border-2 border-amber-700 rounded-full flex justify-center">
                         <div className="w-1 h-3 bg-amber-700 rounded-full mt-2 animate-pulse"></div>
                     </div>
