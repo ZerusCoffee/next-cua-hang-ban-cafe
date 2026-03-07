@@ -9,7 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 export default function Gallery() {
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
     const gridRef = useRef<HTMLDivElement>(null);
-
+    const textRef = useRef<HTMLDivElement>(null);
 
     const setImageRef = (index: number) => (el: HTMLDivElement | null) => {
         imageRefs.current[index] = el;
@@ -23,8 +23,30 @@ export default function Gallery() {
         { src: "/assets/images/about_5.jpg", alt: "ZERUS CAFFE 5", id: 5 },
     ];
 
-
     useGSAP(() => {
+        // Animation cho text
+        if (textRef.current) {
+            gsap.fromTo(textRef.current,
+                {
+                    y: 50,
+                    opacity: 0,
+                },
+                {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: textRef.current,
+                        start: "top bottom-=50",
+                        end: "bottom center",
+                        toggleActions: "play none none reverse",
+                    }
+                }
+            );
+        }
+
+        // Animation cho grid
         if (gridRef.current) {
             gsap.fromTo(gridRef.current,
                 {
@@ -55,6 +77,32 @@ export default function Gallery() {
     return (
         <section className="py-24 px-4 bg-white">
             <div className="max-w-6xl mx-auto">
+                {/* Phần content phía trên gallery */}
+                <div ref={textRef} className="text-center mb-12">
+                    {/* Subtitle nhỏ */}
+                    <span className="inline-block text-lg font-semibold text-emerald-600 uppercase tracking-[0.2em] mb-3">
+                        Không gian ZERUS
+                    </span>
+
+                    {/* Tiêu đề chính */}
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        Câu chuyện được kể qua <span className="text-emerald-600">từng khung hình</span>
+                    </h2>
+
+                    {/* Mô tả */}
+                    <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+                        Những khoảnh khắc đẹp nhất tại ZERUS CAFFE - nơi hương vị cà phê hòa quyện cùng không gian
+                        và những câu chuyện đầy cảm hứng.
+                    </p>
+
+                    {/* Đường kẻ trang trí */}
+                    <div className="flex justify-center gap-2 mt-6">
+                        <div className="w-12 h-1 bg-emerald-500 rounded-full"></div>
+                        <div className="w-4 h-1 bg-emerald-300 rounded-full"></div>
+                        <div className="w-2 h-1 bg-emerald-200 rounded-full"></div>
+                    </div>
+                </div>
+
                 {/* Grid Images - Layout theo yêu cầu */}
                 <div
                     ref={gridRef}
@@ -72,10 +120,12 @@ export default function Gallery() {
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
+                        {/* Thêm text nhẹ khi hover */}
+                        <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm font-medium">Không gian ấm cúng</p>
+                        </div>
                     </div>
 
                     {/* Ảnh 5 - Cột 2 (hàng 1 và 2) */}
@@ -91,6 +141,9 @@ export default function Gallery() {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm font-medium">Góc thư giãn yêu thích</p>
+                        </div>
                     </div>
 
                     {/* Ảnh 2 - Cột 3 */}
@@ -106,7 +159,9 @@ export default function Gallery() {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
+                        <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm font-medium">Những tách cà phê nghệ thuật</p>
+                        </div>
                     </div>
 
                     {/* Hàng 2 */}
@@ -123,6 +178,9 @@ export default function Gallery() {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm font-medium">Kết nối yêu thương</p>
+                        </div>
                     </div>
 
                     {/* Khoảng trống ở cột 2 đã được ảnh 5 chiếm */}
@@ -140,7 +198,9 @@ export default function Gallery() {
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
+                        <div className="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p className="text-sm font-medium">Khoảnh khắc bình yên</p>
+                        </div>
                     </div>
                 </div>
             </div>
