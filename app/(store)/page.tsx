@@ -1,12 +1,13 @@
-import BannerCarousel from "./banner-slider";
-import { Metadata } from "next";
-import MarqueeText from "./marquee-text";
-import Gallery from "./gallery";
-import About from "./about";
-import Feature from "./feature";
 import { Suspense } from "react";
+import About from "./components/about";
+import BannerCarousel from "./components/banner-slider";
+import MarqueeText from "./components/marquee-text";
 import ProductSliderSkeleton from "@/components/product/product-silder-skeleton";
-import Newest from "./newest";
+import Feature from "./components/feature";
+import Newest from "./components/newest";
+import Gallery from "./components/gallery";
+import { Metadata } from "next";
+
 
 export const metadata: Metadata = {
   title: "Trang chủ | Zerus Coffee",
@@ -22,7 +23,7 @@ export default function HomePage() {
         <Feature />
       </Suspense>
 
-      <Suspense>
+      <Suspense fallback={<ProductSliderSkeleton />}>
         <Newest />
       </Suspense>
 
