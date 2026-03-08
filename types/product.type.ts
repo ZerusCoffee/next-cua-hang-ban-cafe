@@ -20,3 +20,12 @@ export interface Product {
 export type ProductCardType = Pick<Product,'id' | 'category' | 'name' | 'slug' | 
                                         'price' | 'shortDescription' | 'viewCount' 
                                         | 'sku' | 'primaryImage' >
+
+export type ProductQueryParams = {
+    category_id?: number
+    page?: number
+    limit?: number
+    min_price?: number
+    max_price?: number
+    name?: string
+}

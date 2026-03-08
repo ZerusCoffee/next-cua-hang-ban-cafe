@@ -4,7 +4,6 @@ import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import { useRef } from "react";
 import { gsap } from "@/lib/gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function Gallery() {
     const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -68,10 +67,6 @@ export default function Gallery() {
                 }
             );
         }
-
-        return () => {
-            ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-        };
     }, []);
 
     return (
