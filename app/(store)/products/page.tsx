@@ -57,15 +57,13 @@ export default async function Page() {
       <div className="max-w-7xl mx-auto px-4 pb-16">
         <div className="space-y-16">
           {ssrCategories.map((category, index) => {
-            const products = productResults[index].data?.items || [];
-            const pagination = productResults[index].data?.pagination;
+            const data = productResults[index]
 
             return (
               <CategorySection key={category.id} category={category}>
                 <InfiniteProductList
                   categoryId={category.id}
-                  initialProducts={products}
-                  initialHasMore={pagination?.hasMore ?? false}
+                  initialData={data}
                 />
               </CategorySection>
             );
