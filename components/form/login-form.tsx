@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { setJWTtoCookie } from "@/lib/cookie";
 import { login } from "@/services/auth";
 import { useUser } from "@/services/user";
-import { LoginFormData, loginSchema } from "@/validation/authSchema";
+import { LoginFormData, loginSchema } from "@/validation/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Link from "next/link";

@@ -1,6 +1,6 @@
-import axios from "@/config/axios";
+import api from "@/config/axios";
 import { Address } from "@/types/address.type";
-import { addressSchema } from "@/validation/addressSchema";
+import { addressSchema } from "@/validation/address.schema";
 import { AxiosError } from "axios";
 import useSWR from "swr";
 import z from "zod";
@@ -33,67 +33,63 @@ interface WardResponse {
 }
 
 export function useProvinces() {
-  const { data, error, isLoading, mutate } = useSWR<ProvinceResponse>(
-    `${process.env.NEXT_PUBLIC_API_URL}/address/provinces`,
-  );
+  const { data, error, isLoading, mutate } =
+    useSWR<ProvinceResponse>(`/address/provinces`);
   return { provinces: data?.data as Province[], error, isLoading, mutate };
 }
 
 export function useWards(province_code: string | null | undefined) {
   const { data, error, isLoading, mutate } = useSWR<WardResponse>(
-    province_code
-      ? `${process.env.NEXT_PUBLIC_API_URL}/address/wards/${province_code}`
-      : null,
+    province_code ? `/address/wards/${province_code}` : null,
   );
   return { wards: data?.data as Ward[], error, isLoading, mutate };
 }
 
 export function useAddress() {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/address`,
-  );
+  const { data, error, isLoading, mutate } = useSWR(`/address`);
   return { addresses: data?.data as Address[], error, isLoading, mutate };
 }
 
 export function useDefaultAddress() {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/address/default`,
-  );
+  const { data, error, isLoading, mutate } = useSWR(`/address/default`);
   return { address: data?.data as Address, error, isLoading, mutate };
 }
 
-export function createAddress(data: z.infer<typeof addressSchema>) {
-  return axios
-    .post(`${process.env.NEXT_PUBLIC_API_URL}/address`, data)
+export async function createAddress(data: z.infer<typeof addressSchema>) {
+  return api
+    .post(`/address`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export function getAddressById(id: string) {
-  return axios
-    .post(`${process.env.NEXT_PUBLIC_API_URL}/address/${id}`)
+export async function getAddressById(id: string) {
+  return api
+    .post(`/address/${id}`)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export function updateAddress(data: z.infer<typeof addressSchema>, id: number) {
-  return axios
-    .put(`${process.env.NEXT_PUBLIC_API_URL}/address/${id}`, data)
+export async function updateAddress(
+  data: z.infer<typeof addressSchema>,
+  id: number,
+) {
+  return api
+    .put(`/address/${id}`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export function deleteAddress(id: number) {
-  return axios
-    .delete(`${process.env.NEXT_PUBLIC_API_URL}/address/${id}`)
+export async function deleteAddress(id: number) {
+  return api
+    .delete(`/address/${id}`)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
 // chac deo can
-export function setDefaultAddressById(id: string) {
-  return axios
-    .patch(`${process.env.NEXT_PUBLIC_API_URL}/address/${id}/set-default`)
+export async function setDefaultAddressById(id: string) {
+  return api
+    .patch(`/address/${id}/set-default`)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }

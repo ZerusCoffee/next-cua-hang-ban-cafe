@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { sendEmailForgotPassword } from "@/services/auth";
-import { forgotPasswordSchema } from "@/validation/authSchema";
+import { forgotPasswordSchema } from "@/validation/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";

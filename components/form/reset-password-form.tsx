@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { resetPassword } from "@/services/auth";
-import { resetPasswordSchema } from "@/validation/authSchema";
+import { resetPasswordSchema } from "@/validation/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";

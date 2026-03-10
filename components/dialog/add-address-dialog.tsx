@@ -27,7 +27,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { createAddress, useProvinces, useWards } from "@/services/address";
-import { AddressFormData, addressSchema } from "@/validation/addressSchema";
+import { AddressFormData, addressSchema } from "@/validation/address.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";

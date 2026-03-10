@@ -6,7 +6,7 @@ import { setJWTtoCookie } from "@/lib/cookie";
 import { cn } from "@/lib/utils";
 import { register } from "@/services/auth";
 import { useUser } from "@/services/user";
-import { registerSchema } from "@/validation/authSchema";
+import { registerSchema } from "@/validation/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";

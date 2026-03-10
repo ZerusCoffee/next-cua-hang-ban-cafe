@@ -1,17 +1,15 @@
-import axios from "@/config/axios";
+import api from "@/config/axios";
 import { User } from "@/types/user.type";
 import {
   changePasswordSchema,
   updateProfileSchema,
-} from "@/validation/userSchema";
+} from "@/validation/user.schema";
 import { AxiosError } from "axios";
 import useSWR from "swr";
 import z from "zod";
 
 export function useUser() {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
-  );
+  const { data, error, isLoading, mutate } = useSWR(`/auth/profile`);
   return {
     mutate,
     user: data?.data as User,
@@ -19,23 +17,27 @@ export function useUser() {
     isLoading,
   };
 }
-export const changePassword = (data: z.infer<typeof changePasswordSchema>) => {
-  return axios
-    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/change-password`, data)
+export const changePassword = async (
+  data: z.infer<typeof changePasswordSchema>,
+) => {
+  return api
+    .put(`/auth/change-password`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };
 
-export const updateProfile = (data: z.infer<typeof updateProfileSchema>) => {
-  return axios
-    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, data)
+export const updateProfile = async (
+  data: z.infer<typeof updateProfileSchema>,
+) => {
+  return api
+    .put(`/auth/profile`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };
 
-export const updateAvatar = (data: FormData) => {
-  return axios
-    .put(`${process.env.NEXT_PUBLIC_API_URL}/auth/avatar`, data)
+export const updateAvatar = async (data: FormData) => {
+  return api
+    .put(`/auth/avatar`, data)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 };

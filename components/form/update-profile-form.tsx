@@ -11,7 +11,7 @@ import { updateProfile, useUser } from "@/services/user";
 import {
   UpdateProfileFormData,
   updateProfileSchema,
-} from "@/validation/userSchema";
+} from "@/validation/user.schema";
 import { useEffect } from "react";
 
 export function UpdateProfileForm() {
