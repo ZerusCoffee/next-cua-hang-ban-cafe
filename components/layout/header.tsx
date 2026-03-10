@@ -102,6 +102,7 @@ export function Header() {
     const navButtons =
       buttonRef.current.querySelectorAll<HTMLElement>(".animate-btn");
 
+    console.log(buttonRef.current.innerHTML);
     const setHomeInitial = () => {
       headerRef.current!.style.backgroundColor = "transparent";
       headerRef.current!.style.backdropFilter = "blur(0px)";
@@ -338,7 +339,7 @@ export function Header() {
               </If>
 
               <If isTrue={!!user && !isLoading}>
-                <CartButton className="hidden md:block" />
+                <CartButton className="hidden md:block animate-btn" />
                 <Menu as="div" className="relative hidden md:block">
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">
@@ -369,11 +370,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Hồ sơ của tôi
                           </Link>
@@ -383,11 +383,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/orders"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Đơn hàng
                           </Link>
@@ -397,11 +396,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/address"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Sổ Địa Chỉ
                           </Link>
@@ -412,11 +410,10 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/coupons"
-                            className={`block px-4 py-2 text-sm ${
-                              active
-                                ? "bg-amber-50 text-amber-700"
-                                : "text-gray-700"
-                            }`}
+                            className={`block px-4 py-2 text-sm ${active
+                              ? "bg-amber-50 text-amber-700"
+                              : "text-gray-700"
+                              }`}
                           >
                             Mã giảm giá
                           </Link>
@@ -428,9 +425,8 @@ export function Header() {
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
-                            className={`block w-full text-left px-4 py-2 text-sm ${
-                              active ? "bg-red-50 text-red-600" : "text-red-500"
-                            }`}
+                            className={`block w-full text-left px-4 py-2 text-sm ${active ? "bg-red-50 text-red-600" : "text-red-500"
+                              }`}
                           >
                             Đăng xuất
                           </button>
