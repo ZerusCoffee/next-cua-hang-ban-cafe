@@ -27,5 +27,6 @@ export type ProductQueryParams = {
     limit?: number
     min_price?: number
     max_price?: number
-    name?: string
+    name?: string,
+    sort_by?: string
 }

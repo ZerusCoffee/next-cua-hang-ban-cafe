@@ -3,25 +3,25 @@
 import { useEffect, useRef } from "react";
 import ProductGrid from "./product-grid";
 import LoadingSpinner from "./loading-spinner";
-import { useInfiniteProducts } from "@/hooks/useProduct";
+import { useInfiniteProducts } from "@/hooks/use-product";
 import { ApiResponse } from "@/types/common/response.type";
 import { Paginated } from "@/types/common/pagination.type";
-import { ProductCardType } from "@/types/product.type";
+import { ProductCardType, ProductQueryParams } from "@/types/product.type";
 
 
 export default function InfiniteProductList({
-    categoryId,
+    params,
     initialData
 }: {
-    categoryId: number,
+    params: ProductQueryParams,
     initialData?: ApiResponse<Paginated<ProductCardType>>
 }) {
     const ref = useRef<HTMLDivElement | null>(null);
 
     const { products, hasMore, isLoadingMore, loadMore } =
-        useInfiniteProducts({
-            category_id: categoryId,
-        }, initialData);
+        useInfiniteProducts(
+            params
+            , initialData);
 
     useEffect(() => {
         const observer = new IntersectionObserver(

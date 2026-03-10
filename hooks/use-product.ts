@@ -68,5 +68,18 @@ export function useInfiniteProducts(
         isLoadingMore: isValidating,
         loadMore,
     };
-    }
+}
 
+export function useGetMaxPrice() {
+    const { data, error, isLoading, mutate } = useSWR(
+        'max-price',
+        () => productService.getMaxPrice()
+    );
+
+    return {
+        data,
+        isLoading,
+        isError: error,
+        mutate,
+    };
+}

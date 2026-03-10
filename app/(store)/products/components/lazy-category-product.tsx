@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import LoadingSpinner from "./loading-spinner";
-import InfiniteProductList from "./infinite-scroll";
+import InfiniteProductList from "./infinite-product-list";
+import { ProductQueryParams } from "@/types/product.type";
 
 export default function LazyCategoryProducts({
-    categoryId,
+    params,
 }: {
-    categoryId: number;
+    params: ProductQueryParams
 }) {
     const ref = useRef<HTMLDivElement | null>(null);
     const [visible, setVisible] = useState(false);
@@ -36,5 +37,5 @@ export default function LazyCategoryProducts({
         );
     }
 
-    return <InfiniteProductList categoryId={categoryId} />;
+    return <InfiniteProductList params={params} />;
 }
