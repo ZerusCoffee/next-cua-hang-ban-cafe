@@ -1,6 +1,6 @@
-export function CouponPage() {
+export default function CouponPage() {
   return (
-    <div>
+    <div className="mt-10">
       <h1>Coupon Page</h1>
       <p>This is the coupon page.</p>
     </div>

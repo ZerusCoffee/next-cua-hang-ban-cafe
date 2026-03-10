@@ -16,7 +16,6 @@ export async function setJWTtoCookie(data: string) {
   });
 }
 
-
 export async function removeJWTfromCookie() {
   const cookieStore = await cookies();
   cookieStore.delete('access_token');

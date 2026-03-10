@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { removeJWTfromCookie } from "@/lib/cookie";
+import { logout } from "@/services/auth";
 import { useUser } from "@/services/user";
 import { getAvatarUrl } from "@/utils/avatar";
 import {
@@ -18,9 +19,9 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { If } from "react-haiku";
+import { CartButton } from "../button/button-cart";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
-
 
 // SVG Icons
 const SearchIcon = ({ className }: { className?: string }) => (
@@ -88,13 +89,12 @@ export function Header() {
   const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const { user, isLoading, mutate } = useUser();
   const router = useRouter();
-  const headerRef = useRef<HTMLElement>(null)
-  const linkRef = useRef<HTMLElement>(null)
-  const buttonRef = useRef<HTMLDivElement>(null)
-
+  const headerRef = useRef<HTMLElement>(null);
+  const linkRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const pathname = usePathname();
-  const isHome = pathname === '/'
+  const isHome = pathname === "/";
 
   useEffect(() => {
     if (!headerRef.current || !linkRef.current || !buttonRef.current) return;
@@ -106,14 +106,14 @@ export function Header() {
       headerRef.current!.style.backgroundColor = "transparent";
       headerRef.current!.style.backdropFilter = "blur(0px)";
       linkRef.current!.style.color = "white";
-      navButtons.forEach(btn => (btn.style.color = "white"));
+      navButtons.forEach((btn) => (btn.style.color = "white"));
     };
 
     const setScrolled = () => {
       headerRef.current!.style.backgroundColor = "white";
       headerRef.current!.style.backdropFilter = "blur(10px)";
       linkRef.current!.style.color = "#374151";
-      navButtons.forEach(btn => (btn.style.color = "#374151"));
+      navButtons.forEach((btn) => (btn.style.color = "#374151"));
     };
 
     if (!isHome) {
@@ -138,7 +138,8 @@ export function Header() {
     };
   }, [isHome]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     removeJWTfromCookie();
     router.push("/");
     mutate(null);
@@ -159,7 +160,8 @@ export function Header() {
       {/* Header chính */}
       <header
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 transition-all duration-400 ease-in-out ${isHome ? 'bg-transparent' : 'bg-white'} `}>
+        className={`fixed top-0 left-0 right-0 z-50 shadow-sm w-full md:py-3 transition-all duration-400 ease-in-out ${isHome ? "bg-transparent" : "bg-white"} `}
+      >
         {/* Container với padding-bottom để tạo khoảng cách */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex items-center justify-between h-16">
@@ -203,7 +205,7 @@ export function Header() {
             {/* Navigation desktop - ẩn khi ở chế độ tìm kiếm */}
             <nav
               ref={linkRef}
-              className={`hidden md:flex items-center space-x-8 animate-link ${isHome ? 'text-white' : 'text-gray-700'} ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+              className={`hidden md:flex items-center space-x-8 animate-link ${isHome ? "text-white" : "text-gray-700"} ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
             >
               {navigation.map((item) => (
                 <Link
@@ -220,7 +222,7 @@ export function Header() {
             {searchMode && (
               <div className="absolute inset-0 flex items-center justify-center px-4 sm:px-6 lg:px-12">
                 <form onSubmit={handleSearch} className="w-full max-w-2xl">
-                  <div className="relative flex items-center" >
+                  <div className="relative flex items-center">
                     <div className="relative flex-1">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <SearchIcon className="h-5 w-5 text-gray-400" />
@@ -336,6 +338,7 @@ export function Header() {
               </If>
 
               <If isTrue={!!user && !isLoading}>
+                <CartButton className="hidden md:block" />
                 <Menu as="div" className="relative hidden md:block">
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">
@@ -366,10 +369,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Hồ sơ của tôi
                           </Link>
@@ -379,10 +383,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/orders"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Đơn hàng
                           </Link>
@@ -392,10 +397,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/address"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Sổ Địa Chỉ
                           </Link>
@@ -406,10 +412,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/coupons"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Mã giảm giá
                           </Link>
@@ -421,8 +428,9 @@ export function Header() {
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
-                            className={`block w-full text-left px-4 py-2 text-sm ${active ? "bg-red-50 text-red-600" : "text-red-500"
-                              }`}
+                            className={`block w-full text-left px-4 py-2 text-sm ${
+                              active ? "bg-red-50 text-red-600" : "text-red-500"
+                            }`}
                           >
                             Đăng xuất
                           </button>
@@ -463,10 +471,10 @@ export function Header() {
         </div>
 
         {/* Gradient spacer để tạo khoảng cách */}
-      </header >
+      </header>
 
       {/* Mobile menu */}
-      < Dialog
+      <Dialog
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
         className="md:hidden"
@@ -576,6 +584,12 @@ export function Header() {
                           <p className="text-sm text-gray-500">{user?.email}</p>
                         </div>
                       </div>
+                      <div className="border-t border-gray-100 my-2 pt-2">
+                        <CartButton
+                          className="w-full justify-start text-gray-700 hover:bg-gray-100"
+                          onClick={() => setMobileMenuOpen(false)}
+                        />
+                      </div>
                       <div className="space-y-1">
                         <Link
                           href="/account"
@@ -645,7 +659,7 @@ export function Header() {
             </div>
           </DialogPanel>
         </div>
-      </Dialog >
+      </Dialog>
     </>
   );
 }
