@@ -3,79 +3,142 @@ import { productService } from "@/services/product-service";
 
 import { productLimit } from "@/app/constants/const";
 import CategorySection from "./components/category-section";
-import InfiniteProductList from "./components/infinite-scroll";
+import InfiniteProductList from "./components/infinite-product-list";
 import LazyCategoryProducts from "./components/lazy-category-product";
+import ProductPageHeader from "./components/product-page-header";
+import FilterBar from "./components/filter-bar";
+
+import { Paginated } from "@/types/common/pagination.type";
+import { ProductCardType, ProductQueryParams } from "@/types/product.type";
+import { Category } from "@/types/category.type";
+import { ApiResponse } from "@/types/common/response.type";
+
+type SearchParamsProps = {
+  searchParams: Promise<{
+    searchName?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    categoryId?: string;
+    sortBy?: string;
+  }>;
+};
+
+export default async function Page({ searchParams }: SearchParamsProps) {
+
+  const params = await searchParams;
+
+  const {
+    searchName,
+    minPrice,
+    maxPrice,
+    categoryId,
+    sortBy
+  } = params;
+
+  const hasFilter = Object.values(params).some(Boolean);
+
+  /* ================= SEARCH MODE ================= */
+
+  if (hasFilter) {
+    const filters = {
+      name: searchName,
+      min_price: minPrice ? parseFloat(minPrice) : undefined,
+      max_price: maxPrice ? parseFloat(maxPrice) : undefined,
+      category_id: categoryId ? parseInt(categoryId) : undefined,
+      sort_by: sortBy,
+      page: 1,
+      limit: productLimit
+    }
+
+    const result = await productService.getProducts(filters);
+
+    return (
+      <div className="min-h-screen bg-[#faf7f2]">
+
+        <ProductPageHeader />
+
+        <FilterBar />
+
+        <div className="flex items-center justify-center p-3 mt-8 gap-2 text-gray-600">
+          <span className="text-3xl font-bold"> Kết quả tìm thấy</span>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 pb-16 mt-8">
+
+          <InfiniteProductList
+            initialData={result}
+            params={filters}
+          />
+
+        </div>
+
+      </div>
+    );
+  }
 
 
-export default async function Page() {
+
+
+  /* ================= CATEGORY MODE ================= */
+
   const res = await categoryService.getAllCategory();
-  const categories = res.data || [];
+  const categories: Category[] = res.data || [];
+
   const ssrCategories = categories.slice(0, 3);
   const lazyCategories = categories.slice(3);
+  const filter: ProductQueryParams = {}
 
-  // fetch products parallel
-  const productResults = await Promise.all(
-    categories.map((category) =>
-      productService.getProducts({
-        category_id: category.id,
-        page: 1,
-        limit: productLimit,
-      })
-    )
-  );
-
+  const productResults: ApiResponse<Paginated<ProductCardType>>[] =
+    await Promise.all(
+      ssrCategories.map((category) =>
+        productService.getProducts({
+          category_id: category.id,
+          page: 1,
+          limit: productLimit,
+        })
+      )
+    );
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-amber-50/50 to-white">
-      {/* Header section */}
-      <div className="relative overflow-hidden bg-linear-to-r from-amber-900 to-amber-700 text-white py-12 mb-8">
-        {/* Decorative elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-white rounded-full blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-500 rounded-full blur-3xl" />
-        </div>
+    <div className="min-h-screen bg-[#faf7f2]">
 
-        <div className="max-w-7xl mx-auto px-4 relative">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3">
-            Thực đơn <span className="text-amber-200">Zerus</span>
-          </h1>
-          <p className="text-lg text-amber-100 max-w-2xl">
-            Khám phá các loại đồ uống và snack thơm ngon, được chế biến từ những nguyên liệu tươi ngon nhất
-          </p>
+      <ProductPageHeader />
 
-          {/* Stats */}
-          <div className="flex gap-6 mt-6">
+      <FilterBar />
 
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-amber-300 rounded-full" />
-              <span className="text-amber-200">Giao hàng tận nơi</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="max-w-7xl mx-auto px-4 pb-16 mt-8">
 
-      <div className="max-w-7xl mx-auto px-4 pb-16">
         <div className="space-y-16">
+
           {ssrCategories.map((category, index) => {
-            const data = productResults[index]
+
+            const data = productResults[index];
 
             return (
               <CategorySection key={category.id} category={category}>
+
                 <InfiniteProductList
-                  categoryId={category.id}
+                  params={{ ...filter, category_id: category.id }}
                   initialData={data}
                 />
+
               </CategorySection>
             );
           })}
 
           {lazyCategories.map((category) => (
             <CategorySection key={category.id} category={category}>
-              <LazyCategoryProducts categoryId={category.id} />
+
+              <LazyCategoryProducts
+                params={{ ...filter, category_id: category.id }}
+              />
+
             </CategorySection>
           ))}
+
         </div>
+
       </div>
+
     </div>
   );
 }

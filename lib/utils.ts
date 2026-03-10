@@ -11,3 +11,7 @@ export function formatPrice(price: number) {
     currency: "VND",
   }).format(price);
 }
+
+export const roundToNearest5k = (value: number): number => {
+    return Math.ceil(value / 5000) * 5000;
+};
