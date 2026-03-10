@@ -1,17 +1,39 @@
-'use client'
-import { formatPrice } from '@/lib/utils';
-import { ShoppingCart, Star } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '../ui/button';
-import { useState } from 'react';
-import { ProductCardType } from '@/types/product.type';
+"use client";
+import { formatPrice } from "@/lib/utils";
+import { addItemToCart, useCart } from "@/services/cart";
+import { ProductCardType } from "@/types/product.type";
+import { ShoppingCart, Star } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 export default function ProductCard({ product }: { product: ProductCardType }) {
   const [isHovered, setIsHovered] = useState(false);
 
+  const { mutate } = useCart();
+
+  const handleAddtoCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      await addItemToCart({
+        product_id: product.id,
+        quantity: 1,
+      });
+      await mutate();
+      toast.success("Đã thêm vào giỏ hàng");
+    } catch (error) {
+      toast.error("Thêm thất bại" + error);
+    }
+  };
   return (
-    <Link href={`/product/${product.id}`} className="no-underline hover:no-underline block h-full">
+    <Link
+      href={`/product/${product.slug}`}
+      className="no-underline hover:no-underline block h-full"
+    >
       <div
         className="relative bg-white rounded-xl border border-green-200 hover:border-green-300 transition-all duration-200 group cursor-pointer overflow-hidden h-full flex flex-col"
         onMouseEnter={() => setIsHovered(true)}
@@ -24,7 +46,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             alt={product.name}
             width={250}
             height={250}
-            className={`w-full h-full object-contain p-2 sm:p-3 md:p-4 transition-all duration-200 ${isHovered ? 'scale-105' : 'scale-100'}`}
+            className={`w-full h-full object-contain p-2 sm:p-3 md:p-4 transition-all duration-200 ${isHovered ? "scale-105" : "scale-100"}`}
           />
         </div>
 
@@ -37,14 +59,17 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(4)
-                        ? 'text-green-600 fill-green-600'
-                        : 'text-green-200'
-                      }`}
+                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                      i < Math.floor(4)
+                        ? "text-green-600 fill-green-600"
+                        : "text-green-200"
+                    }`}
                   />
                 ))}
               </div>
-              <span className="text-[10px] sm:text-xs text-green-600 ml-1">({product.viewCount})</span>
+              <span className="text-[10px] sm:text-xs text-green-600 ml-1">
+                ({product.viewCount})
+              </span>
             </div>
           </div>
 
@@ -68,10 +93,12 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
 
             {/* Nút thêm vào giỏ */}
             <Button
-              className={`rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 ${isHovered
-                  ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-green-100 text-green-700 hover:bg-green-200'
-                }`}
+              className={`rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 ${
+                isHovered
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "bg-green-100 text-green-700 hover:bg-green-200"
+              }`}
+              onClick={handleAddtoCart}
             >
               <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             </Button>
