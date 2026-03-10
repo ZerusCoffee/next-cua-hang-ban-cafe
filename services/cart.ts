@@ -15,14 +15,16 @@ export async function addItemToCart(payload: AddItemPayload) {
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export async function updateItemQuantity(itemKey: string, quantity: number) {
+export async function updateItemQuantity(itemKey: number, quantity: number) {
+  //chinh sau z
   return api
     .patch(`/cart/items/${itemKey}`, { quantity })
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export async function removeItemFromCart(itemKey: string) {
+export async function removeItemFromCart(itemKey: number) {
+  //chinh sau z
   return api
     .delete(`/cart/items/${itemKey}`)
     .then((res) => res.data)
