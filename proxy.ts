@@ -13,6 +13,7 @@ export function proxy(request: NextRequest) {
   ];
 
   const protectedRoutes = [
+    "/cart",
     "/account",
     "/account/address",
     "/account/coupons",

@@ -10,23 +10,21 @@ export function useCart() {
 
 export async function addItemToCart(payload: AddItemPayload) {
   return api
-    .post("/cart/items", payload)
+    .post("/cart/add", payload)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export async function updateItemQuantity(itemKey: number, quantity: number) {
-  //chinh sau z
+export async function updateItemQuantity(itemKey: string, quantity: number) {
   return api
-    .patch(`/cart/items/${itemKey}`, { quantity })
+    .put(`/cart/item/${itemKey}`, { quantity })
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
 
-export async function removeItemFromCart(itemKey: number) {
-  //chinh sau z
+export async function removeItemFromCart(itemKey: string) {
   return api
-    .delete(`/cart/items/${itemKey}`)
+    .delete(`/cart/item/${itemKey}`)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }

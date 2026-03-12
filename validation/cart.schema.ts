@@ -22,6 +22,7 @@ export const UpdateItemPayloadSchema = z.object({
 });
 
 export const CartItemSchema = z.object({
+  item_key: z.string(),
   product_id: z.number(),
   product_name: z.string(),
   product_sku: z.string(),
