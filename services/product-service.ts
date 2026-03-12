@@ -1,6 +1,8 @@
+import api from "@/config/axios";
 import { Paginated } from "@/types/common/pagination.type";
 import { ApiResponse } from "@/types/common/response.type";
-import { ProductCardType, ProductQueryParams } from "@/types/product.type";
+import { OptionGroup } from "@/types/option.type";
+import { Product, ProductCardType, ProductQueryParams } from "@/types/product.type";
 import { fetcher } from "@/utils/fetcher";
 
 export const productService = {
@@ -27,6 +29,14 @@ export const productService = {
 
     getMaxPrice: async () : Promise<ApiResponse<number>> => {
         return fetcher("/product/max-price");
+    },
+
+    getProductBySlug: async(slug: string): Promise<ApiResponse<Product>> => {
+        return fetcher(`/product/${slug}`)
+    },
+
+    getOptionsBySlug: async(slug: string) : Promise<ApiResponse<OptionGroup[]>> =>{
+        return fetcher(`/product/${slug}/options`)
     }
 
 }

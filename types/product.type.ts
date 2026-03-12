@@ -13,6 +13,7 @@ export interface Product {
     isActive: true,
     viewCount: number,
     primaryImage: string | null,
+    images: string[]
     created_at: Date,
     updated_at: Date
 }
