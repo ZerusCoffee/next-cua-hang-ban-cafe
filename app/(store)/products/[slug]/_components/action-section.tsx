@@ -4,7 +4,7 @@ import OptionCard from './option-card';
 import ProductSummary from './product-summary';
 import { buildInitialState, optionReducer, useGetOptions } from '@/hooks/use-option';
 import Loading from '@/app/loading';
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 
 
 
@@ -15,7 +15,6 @@ export default function ActionSection({ product }: { product: Product }) {
 
 
     const [state, dispatch] = useReducer(optionReducer, {})
-    const [quantity, setQuantity] = useState(1)
 
     // console.log(state)
 

@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator'
 import { OptionState } from '@/hooks/use-option'
 import { formatPrice } from '@/lib/utils'
 import { OptionGroup } from '@/types/option.type'
-import { Heart, Minus, Plus, ShoppingBag } from 'lucide-react'
+import { Minus, Plus, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 
 
@@ -49,12 +49,12 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
     const totalPerOne = Number(basePrice) + Number(optionPrice)
 
     return (
-        <Card className="border-green-100 shadow-lg bg-linear-to-br from-white to-green-50/30">
+        <Card className="border-amber-300 shadow-lg bg-linear-to-br from-white to-amber-50/30">
             <CardContent className="p-6 h-full flex flex-col">
-                <h3 className="font-semibold text-green-800 mb-4">Đơn hàng của bạn</h3>
+                <h3 className="font-semibold text-amber-900 mb-4">Đơn hàng của bạn</h3>
 
                 {/* Total Price */}
-                <div className="bg-linear-to-r from-green-600 to-emerald-600 rounded-lg p-4 text-white shadow-md mb-6">
+                <div className="bg-linear-to-r from-amber-600 to-amber-600 rounded-lg p-4 border- text-white shadow-md mb-6">
                     <div className="flex items-center justify-between mb-1">
                         <span className="text-sm opacity-90">Tổng tiền</span>
                     </div>
@@ -66,9 +66,9 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
 
                 {/* Order Summary */}
                 <div className="space-y-2 text-sm mb-6 flex-1">
-                    <div className="flex justify-between text-muted-foreground">
+                    <div className="flex justify-between text-gray-600">
                         <span>Giá cơ bản:</span>
-                        <span className="font-medium text-green-700">{formatPrice(basePrice)}</span>
+                        <span className="font-medium text-amber-700">{formatPrice(basePrice)}</span>
                     </div>
 
                     {Object.entries(optionState).map(([groupId, value]) => {
@@ -83,9 +83,9 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
                             const option = group.options.find(o => o.id === value.id)
                             if (!option || Number(option.additionalPrice) === 0) return null
                             return (
-                                <div key={gid} className="flex justify-between text-muted-foreground">
+                                <div key={gid} className="flex justify-between text-gray-600">
                                     <span>{group.groupName} {option.value} : </span>
-                                    <span className="font-medium text-green-700">
+                                    <span className="font-medium text-amber-700">
                                         +{formatPrice(option.additionalPrice)}
                                     </span>
                                 </div>
@@ -94,15 +94,13 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
 
                         // multiple option
                         else {
-
                             return value.map(op => {
-                                <>{group.groupName}</>
                                 const option = group.options.find(o => o.id === op.id)
                                 if (!option) return null
                                 return (
-                                    <div key={option.id} className="flex justify-between text-muted-foreground">
+                                    <div key={option.id} className="flex justify-between text-gray-600">
                                         <span>{option.value}</span>
-                                        <span className="font-medium text-green-700">
+                                        <span className="font-medium text-amber-700">
                                             +{formatPrice(option.additionalPrice)}
                                         </span>
                                     </div>
@@ -111,27 +109,27 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
                         }
 
                     })}
-                    <Separator className="bg-green-100 my-2" />
+                    <Separator className="bg-amber-200 my-2" />
                     <div className="flex justify-between font-medium">
-                        <span>Tạm tính:</span>
-                        <span className="text-green-700">{formatPrice(totalPerOne)}</span>
+                        <span className="text-gray-800">Tạm tính:</span>
+                        <span className="text-amber-700">{formatPrice(totalPerOne)}</span>
                     </div>
                 </div>
 
                 {/* Quantity and Actions */}
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-green-700">Số lượng:</span>
-                        <div className="flex items-center border border-green-200 rounded-lg bg-white">
+                        <span className="text-sm font-medium text-amber-800">Số lượng:</span>
+                        <div className="flex items-center border border-amber-300 rounded-lg bg-white">
                             <Button
-                                variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
                                 onClick={handleDecrease}
                             >
                                 <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="w-10 text-center font-medium text-sm text-green-800">{quantity}</span>
+                            <span className="w-10 text-center font-medium text-sm text-amber-900">{quantity}</span>
                             <Button
-                                variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:bg-green-50 hover:text-green-700"
+                                variant="ghost" size="icon" className="h-8 w-8 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
                                 onClick={() => setQuantity(prev => prev + 1)}
                             >
                                 <Plus className="h-3 w-3" />
@@ -139,15 +137,15 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
                         </div>
                     </div>
 
-                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white gap-2 shadow-md hover:shadow-lg">
+                    <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-md hover:shadow-lg">
                         <ShoppingBag className="h-4 w-4" />
                         Thêm vào giỏ hàng
                     </Button>
 
-                    <Button variant="outline" className="w-full border-green-200 hover:border-green-400 hover:bg-green-50 gap-2">
-                        <Heart className="h-4 w-4 text-green-600" />
+                    {/* <Button variant="outline" className="w-full border-amber-300 hover:border-amber-500 hover:bg-amber-50 gap-2">
+                        <Heart className="h-4 w-4 text-amber-600" />
                         Yêu thích
-                    </Button>
+                    </Button> */}
                 </div>
             </CardContent>
         </Card>

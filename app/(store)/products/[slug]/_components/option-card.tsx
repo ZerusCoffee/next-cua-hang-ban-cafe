@@ -17,10 +17,10 @@ type OptionCardType = {
 
 export default function OptionCard({ optionGroups, optionState, dispatch }: OptionCardType) {
     return (
-        <Card className={`border-green-100 shadow-lg lg:col-span-2 ${optionGroups.length === 0 && 'hidden md:block'}`}>
+        <Card className={`border-amber-300 shadow-lg lg:col-span-2 ${optionGroups.length === 0 && 'hidden md:block'}`}>
             <CardContent className="p-6">
-                <h3 className="font-semibold text-green-800 mb-4 flex items-center gap-2">
-                    <Coffee className="w-4 h-4" />
+                <h3 className="font-semibold text-amber-900 mb-4 flex items-center gap-2">
+                    <Coffee className="w-4 h-4 text-amber-700" />
                     Tùy chọn sản phẩm
                 </h3>
 
@@ -38,7 +38,7 @@ export default function OptionCard({ optionGroups, optionState, dispatch }: Opti
                             const max = group.max;
                             return (
                                 <div className='space-y-5' key={group.groupId}>
-                                    <span className="text-sm font-medium text-green-700 flex items-center gap-1">
+                                    <span className="text-sm font-medium text-amber-800 flex items-center gap-1">
                                         {group.groupName} {group.type === 'multiple' && `(Chọn tối đa : ${group.max})`}
                                     </span>
 
@@ -66,8 +66,8 @@ export default function OptionCard({ optionGroups, optionState, dispatch }: Opti
                                                     variant={isSelected ? "default" : "outline"}
                                                     className={
                                                         `cursor-pointer ${isSelected
-                                                            ? "bg-green-600 hover:bg-green-700 w-full"
-                                                            : "border-green-200 text-green-700 hover:border-green-400 hover:bg-green-50 w-full"
+                                                            ? "bg-amber-500/95 hover:bg-amber-600 text-black border-amber-500 font-medium shadow-md"
+                                                            : "border-amber-300 text-amber-900 hover:border-amber-600 hover:bg-amber-100 w-full"
                                                         }`
                                                     }
                                                     onClick={() =>
@@ -85,7 +85,7 @@ export default function OptionCard({ optionGroups, optionState, dispatch }: Opti
                                             )
                                         })}
                                     </div>
-                                    <Separator className="bg-green-100" />
+                                    <Separator className="bg-amber-300" />
                                 </div>
                             )
                         }
