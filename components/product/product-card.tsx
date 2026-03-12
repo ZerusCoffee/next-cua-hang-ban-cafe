@@ -11,8 +11,9 @@ import { Button } from "../ui/button";
 
 export default function ProductCard({ product }: { product: ProductCardType }) {
   const [isHovered, setIsHovered] = useState(false);
-
   const { mutate } = useCart();
+  if (!product) return;
+
 
   const handleAddtoCart = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -31,7 +32,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
   };
   return (
     <Link
-      href={`/product/${product.slug}`}
+      href={`/products/${product.slug}`}
       className="no-underline hover:no-underline block h-full"
     >
       <div
@@ -42,11 +43,12 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
         {/* Hình ảnh sản phẩm */}
         <div className="relative h-36 sm:h-40 md:h-48 overflow-hidden bg-green-50">
           <Image
-            src={`/assets/images/mask-img.png`}
+            src={product.primaryImage ?? `/assets/images/mask-img.png`}
             alt={product.name}
             width={250}
             height={250}
             className={`w-full h-full object-contain p-2 sm:p-3 md:p-4 transition-all duration-200 ${isHovered ? "scale-105" : "scale-100"}`}
+            unoptimized
           />
         </div>
 
