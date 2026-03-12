@@ -61,10 +61,11 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(4)
+                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                      i < Math.floor(4)
                         ? "text-green-600 fill-green-600"
                         : "text-green-200"
-                      }`}
+                    }`}
                   />
                 ))}
               </div>
@@ -94,10 +95,11 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
 
             {/* Nút thêm vào giỏ */}
             <Button
-              className={`rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 ${isHovered
+              className={`rounded-full p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-9 transition-all duration-200 ${
+                isHovered
                   ? "bg-green-600 text-white hover:bg-green-700"
                   : "bg-green-100 text-green-700 hover:bg-green-200"
-                }`}
+              }`}
               onClick={handleAddtoCart}
             >
               <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
