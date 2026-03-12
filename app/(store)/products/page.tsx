@@ -99,7 +99,7 @@ export default async function Page({ searchParams }: SearchParamsProps) {
     );
 
   return (
-    <div className="min-h-screen bg-[#faf7f2]">
+    <div className="min-h-screen bg-linear-to-b to-amber-50 from-white">
 
       <ProductPageHeader />
 

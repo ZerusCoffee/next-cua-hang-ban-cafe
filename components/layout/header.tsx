@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { removeJWTfromCookie } from "@/lib/cookie";
 import { logout } from "@/services/auth";
@@ -96,13 +96,14 @@ export function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (isLoading) return;
     if (!headerRef.current || !linkRef.current || !buttonRef.current) return;
 
     const navButtons =
       buttonRef.current.querySelectorAll<HTMLElement>(".animate-btn");
 
-    console.log(buttonRef.current.innerHTML);
+    console.log(buttonRef.current);
     const setHomeInitial = () => {
       headerRef.current!.style.backgroundColor = "transparent";
       headerRef.current!.style.backdropFilter = "blur(0px)";
@@ -137,7 +138,7 @@ export function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [isHome]);
+  }, [isHome, isLoading]);
 
   const handleLogout = async () => {
     await logout();
@@ -149,7 +150,7 @@ export function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/products?searchName=${encodeURIComponent(searchQuery.trim())}`);
       setSearchMode(false);
       setSearchQuery("");
       setMobileMenuOpen(false); // Đóng mobile menu khi tìm kiếm
@@ -339,7 +340,7 @@ export function Header() {
               </If>
 
               <If isTrue={!!user && !isLoading}>
-                <CartButton className="hidden md:block animate-btn" />
+                <CartButton className={`hidden md:block animate-btn ${isHome ? "text-white" : "text-gray-700"}`} />
                 <Menu as="div" className="relative hidden md:block">
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">

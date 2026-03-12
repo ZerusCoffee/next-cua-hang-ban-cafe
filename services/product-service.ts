@@ -37,6 +37,10 @@ export const productService = {
 
     getOptionsBySlug: async(slug: string) : Promise<ApiResponse<OptionGroup[]>> =>{
         return fetcher(`/product/${slug}/options`)
+    },
+
+    getRelatedProducts: async(slug: string) : Promise<ApiResponse<ProductCardType[]>> => {
+        return fetcher(`/product/${slug}/related`)
     }
 
 }

@@ -16,7 +16,7 @@ export function CartButton({ className = "", onClick }: CartButtonProps) {
   return (
     <Link href="/cart" onClick={onClick} className="relative inline-block">
       <div
-        className={`p-2 rounded-lg hover:bg-amber-700 text-white cursor-pointer transition-colors ${className}`}
+        className={`p-2 rounded-lg hover:bg-amber-700 cursor-pointer transition-colors ${className}`}
       >
         <ShoppingCartIcon className="h-5 w-5" />
 
