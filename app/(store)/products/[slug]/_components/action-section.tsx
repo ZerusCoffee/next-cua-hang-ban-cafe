@@ -46,6 +46,7 @@ export default function ActionSection({ product }: { product: Product }) {
                 basePrice={product.price}
                 optionGroups={optionGroups || []}
                 optionState={state}
+                productId={product.id}
             />
         </div>
     )
