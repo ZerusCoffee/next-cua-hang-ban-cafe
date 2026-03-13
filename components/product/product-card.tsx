@@ -21,8 +21,8 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Hình ảnh sản phẩm - TO HƠN */}
-        <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden bg-amber-100">
+        {/* Hình ảnh sản phẩm */}
+        <div className="relative h-48 overflow-hidden bg-amber-100">
           <Image
             src={product.primaryImage ?? `/assets/images/mask-img.png`}
             alt={product.name}
@@ -33,7 +33,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
           />
         </div>
 
-        {/* Thông tin sản phẩm - GẦN LẠI */}
+        {/* Thông tin sản phẩm */}
         <div className="p-3 sm:p-4 flex-1 flex flex-col bg-linear-to-b from-white to-amber-50/30">
           {/* Đánh giá và đã bán */}
           <div className="flex items-center justify-between mb-1">
@@ -67,12 +67,12 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
 
           {/* Giá và nút xem ngay */}
           <div className="flex items-center justify-between mt-auto pt-2 border-t border-amber-200">
-            <span className="text-base sm:text-lg font-extrabold text-amber-900">
+            <span className="text-sm md:text-base font-extrabold text-amber-900">
               {formatPrice(product.price)}
             </span>
 
             <Button
-              className={`px-4 py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${isHovered
+              className={`px-2 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${isHovered
                 ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
                 : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
                 }`}

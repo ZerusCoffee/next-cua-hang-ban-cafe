@@ -1,5 +1,6 @@
 export interface Option {
     id: number,
+    productOptionId: number,
     value: string,
     additionalPrice: number
 }

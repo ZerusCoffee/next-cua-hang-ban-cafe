@@ -60,14 +60,13 @@ export default async function ProductDetailPage({
       </div>
 
       {/* Related Products */}
-      <div className="my-6 px-8">
+      <div className="my-6 px-2 md:px-8">
         <h3 className="text-xl font-bold text-amber-800 mb-4 flex items-center gap-2">
           <span className="w-1 h-10 bg-amber-500 rounded-full"></span>
           Có thể bạn cũng thích
         </h3>
         <ProductCarousel
           products={relatedProducts.data || []}
-          option={5}
         />
       </div>
     </div>

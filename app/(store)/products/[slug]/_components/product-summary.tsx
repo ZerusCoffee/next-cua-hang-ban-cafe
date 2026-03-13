@@ -5,18 +5,24 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { OptionState } from '@/hooks/use-option'
 import { formatPrice } from '@/lib/utils'
+import { addItemToCart, useCart } from '@/services/cart'
 import { OptionGroup } from '@/types/option.type'
+import { CartItemOption } from '@/validation/cart.schema'
 import { Minus, Plus, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 
 type ProductSummaryType = {
+    productId: number,
     basePrice: number,
     optionState: OptionState,
     optionGroups: OptionGroup[]
 }
 
-export default function ProductSummary({ basePrice, optionState, optionGroups }: ProductSummaryType) {
+
+
+export default function ProductSummary({ basePrice, optionState, optionGroups, productId }: ProductSummaryType) {
 
     const [quantity, setQuantity] = useState(1)
 
@@ -24,6 +30,60 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
         if (quantity === 1) return;
         setQuantity(prev => prev - 1)
     }
+
+    const { mutate } = useCart();
+
+
+    const handleAddtoCart = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const options: CartItemOption[] = []
+
+        Object.entries(optionState).forEach(([groupId, value]) => {
+            const gid = Number(groupId)
+            const group = optionGroups.find(g => g.groupId === gid)
+
+            if (!group) return;
+
+            if (!Array.isArray(value)) {
+                const option: CartItemOption = {
+                    additional_price: value.additionalPrice,
+                    group_name: group.groupName,
+                    option_value: value.value,
+                    option_id: value.id,
+                    product_option_id: value.productOptionId
+                }
+
+                options.push(option)
+            }
+
+            else {
+                value.map(v => {
+                    const option: CartItemOption = {
+                        additional_price: v.additionalPrice,
+                        group_name: group.groupName,
+                        option_value: v.value,
+                        option_id: v.id,
+                        product_option_id: v.productOptionId
+                    }
+                    options.push(option)
+                })
+            }
+        })
+
+        try {
+            await addItemToCart({
+                product_id: productId,
+                quantity: 1,
+                options
+            });
+            await mutate();
+            toast.success("Đã thêm vào giỏ hàng");
+        } catch (error) {
+            toast.error("Thêm thất bại" + error);
+        }
+    };
 
     const optionPrice = Object.entries(optionState).reduce((total, [groupId, value]) => {
 
@@ -137,7 +197,10 @@ export default function ProductSummary({ basePrice, optionState, optionGroups }:
                         </div>
                     </div>
 
-                    <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-md hover:shadow-lg">
+                    <Button
+                        onClick={handleAddtoCart}
+                        className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-md hover:shadow-lg"
+                    >
                         <ShoppingBag className="h-4 w-4" />
                         Thêm vào giỏ hàng
                     </Button>
