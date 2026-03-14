@@ -1,10 +1,22 @@
-import { useFormContext } from "react-hook-form";
-import { CreditCard, Truck } from "lucide-react";
-import { FormField, FormItem, FormControl, FormLabel, FormMessage } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreditCard, Truck } from "lucide-react";
+import Image from "next/image";
+import { useFormContext } from "react-hook-form";
 
 export function PaymentStep() {
   const { control } = useFormContext();
@@ -13,9 +25,13 @@ export function PaymentStep() {
     <>
       <CardHeader className="bg-linear-to-r from-primary/5 to-transparent">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg"><CreditCard className="h-6 w-6 text-primary" /></div>
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <CreditCard className="h-6 w-6 text-primary" />
+          </div>
           <div>
-            <CardTitle className="text-2xl text-gray-900">Phương thức thanh toán</CardTitle>
+            <CardTitle className="text-2xl text-gray-900">
+              Phương thức thanh toán
+            </CardTitle>
             <CardDescription>Chọn cách bạn muốn thanh toán</CardDescription>
           </div>
         </div>
@@ -27,19 +43,73 @@ export function PaymentStep() {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="space-y-3">
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="grid grid-cols-1 sm:grid-cols-1 gap-3"
+                >
                   {[
-                    { id: "cod", label: "COD", desc: "Thanh toán khi nhận hàng", icon: <Truck className="h-5 w-5" /> },
-                    { id: "vnpay", label: "VNPAY", desc: "Cổng thanh toán VNPAY", color: "text-blue-600" },
-                    { id: "momo", label: "MOMO", desc: "Ví điện tử Momo", color: "text-pink-600" },
+                    {
+                      id: "cod",
+                      label: "COD",
+                      desc: "Thanh toán khi nhận hàng",
+                      icon: <Truck className="h-5 w-5" />,
+                    },
+                    {
+                      id: "vnpay",
+                      label: "VNPAY",
+                      desc: "Cổng thanh toán VNPAY",
+                      logo: "/assets/images/vnpay.png",
+                    },
+                    {
+                      id: "momo",
+                      label: "MOMO",
+                      desc: "Ví điện tử Momo",
+                      logo: "/assets/images/momo.png",
+                    },
+                    {
+                      id: "paypal",
+                      label: "PayPal",
+                      desc: "Thanh toán qua PayPal",
+                      logo: "/assets/images/paypal.png",
+                    },
                   ].map((item) => (
-                    <div key={item.id} className={`flex items-center space-x-3 border-2 rounded-lg p-4 cursor-pointer ${field.value === item.id ? "border-primary bg-primary/5" : "border-gray-200"}`}>
-                      <RadioGroupItem value={item.id} id={item.id} />
-                      <Label htmlFor={item.id} className="flex-1 cursor-pointer">
-                        <span className="font-medium">{item.label}</span>
-                        <p className="text-sm text-gray-500">{item.desc}</p>
+                    <div
+                      key={item.id}
+                      className={`flex items-center gap-3 border-2 rounded-lg p-3 cursor-pointer transition-all ${
+                        field.value === item.id
+                          ? "border-primary bg-primary/5"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    >
+                      <RadioGroupItem
+                        value={item.id}
+                        id={item.id}
+                        className="mt-0"
+                      />
+                      <Label
+                        htmlFor={item.id}
+                        className="flex-1 cursor-pointer flex items-center gap-2"
+                      >
+                        <div className="flex-1">
+                          <span className="font-medium text-sm block">
+                            {item.label}
+                          </span>
+                          <p className="text-xs text-gray-500">{item.desc}</p>
+                        </div>
+                        {item.icon ? (
+                          <div className="text-gray-600">{item.icon}</div>
+                        ) : item.logo ? (
+                          <div className="relative w-12 h-6 shrink-0">
+                            <Image
+                              src={item.logo}
+                              alt={item.label}
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                        ) : null}
                       </Label>
-                      {item.icon || <span className={`text-sm font-bold ${item.color}`}>{item.label}</span>}
                     </div>
                   ))}
                 </RadioGroup>
@@ -54,7 +124,13 @@ export function PaymentStep() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Ghi chú đơn hàng</FormLabel>
-              <FormControl><Textarea placeholder="Ghi chú cho người giao hàng..." {...field} /></FormControl>
+              <FormControl>
+                <Textarea
+                  placeholder="Ghi chú cho người giao hàng..."
+                  className="min-h-20"
+                  {...field}
+                />
+              </FormControl>
             </FormItem>
           )}
         />
