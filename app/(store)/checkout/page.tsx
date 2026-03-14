@@ -28,7 +28,7 @@ import { Form } from "@/components/ui/form";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, isLoading: cartLoading } = useCart();
+  const { cart, isLoading: cartLoading, mutate } = useCart();
   const { addresses, mutate: refreshAddresses } = useAddress();
   const { address: defaultAddress } = useDefaultAddress();
 
@@ -51,15 +51,17 @@ export default function CheckoutPage() {
       form.setValue("shipping_ward", defaultAddress.ward);
       form.setValue("shipping_address_details", defaultAddress.details);
     }
-  }, [defaultAddress]);
+  }, [defaultAddress, form, selectedAddress]);
 
   const onHandleSubmit = async (data: CheckoutRequest) => {
     setProcessing(true);
     try {
       const res = await CheckOut(data);
+      mutate(null, false);
+      console.log("Payment URL: " + res.data.payment_url);
+      router.push(res.data.payment_url ?? "/");
       toast.success("Đặt hàng thành công!");
-      if (res.payment_url) window.location.href = res.payment_url;
-      else router.push(`/order/success?order_number=${res.order_number}`);
+      console.log(res);
     } catch (e) {
       toast.error("Lỗi đặt hàng" + e);
     } finally {
