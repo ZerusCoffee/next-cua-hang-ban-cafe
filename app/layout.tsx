@@ -25,7 +25,7 @@ export default function RootLayout({
             <LayoutWrapper>{children}</LayoutWrapper>
             <Footer />
           </div>
-          <Toaster />
+          <Toaster position="bottom-right" closeButton/>
         </SWRProvider>
       </body>
     </html>

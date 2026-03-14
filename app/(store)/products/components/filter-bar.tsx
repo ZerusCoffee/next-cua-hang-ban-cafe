@@ -15,7 +15,20 @@ import PriceSlider from './filter/price-slider';
 import { roundToNearest5k } from '@/lib/utils';
 import FilterFooter from './filter/filter-footer';
 
+import { useSearchParams } from "next/navigation";
+
+
+
 export default function FilterBar() {
+    const searchParams = useSearchParams();
+
+    const categoryParam = searchParams.get("categoryId") ?? "all";
+    const sortByParam = searchParams.get("sortBy") ?? "default";
+    const searchTermParam = searchParams.get("searchName") ?? "";
+
+    const minPriceParam = Number(searchParams.get("minPrice") ?? 0);
+    const maxPriceParam = Number(searchParams.get("maxPrice") ?? 100000);
+
     const router = useRouter();
     const { data: categoryData } = useGetCategory();
     const categories = categoryData?.data || [];
@@ -23,10 +36,16 @@ export default function FilterBar() {
     const { data: maxPriceData } = useGetMaxPrice();
     const maxPrice = maxPriceData?.data ? roundToNearest5k(maxPriceData?.data) : 100000;
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000000]);
-    const [category, setCategory] = useState('all');
-    const [sortBy, setSortBy] = useState('default');
+    const [searchTerm, setSearchTerm] = useState(searchTermParam);
+
+    const [priceRange, setPriceRange] = useState<[number, number]>([
+        minPriceParam,
+        maxPriceParam
+    ]);
+
+    const [category, setCategory] = useState(categoryParam);
+
+    const [sortBy, setSortBy] = useState(sortByParam);
     const [showFilters, setShowFilters] = useState(false);
 
     // Cập nhật priceRange khi có maxPrice từ API
@@ -68,8 +87,8 @@ export default function FilterBar() {
     };
 
     return (
-        <div className="bg-white border-y shadow-sm sticky md:relative md:top-0 top-15 z-40">
-            <div className='mt-3 px-4 py-3 hidden border-b-2 border-amber-300 md:block'>
+        <div className="bg-white border-y shadow-sm sticky top-0 md:top-5 z-40">
+            <div className='mt-3 px-4 py-3  border-b-2 border-amber-300'>
                 <h2 className="text-2xl font-semibold text-emerald-800 text-center">
                     Bộ lọc sản phẩm
                 </h2>
@@ -79,7 +98,7 @@ export default function FilterBar() {
                 <div className="flex items-center justify-center gap-2">
                     <Button
                         variant="outline"
-                        className="md:hidden p-4"
+                        className=" p-4"
                         onClick={() => setShowFilters(!showFilters)}
                     >
                         <span className=''>Bộ lọc tìm kiếm</span>
@@ -90,7 +109,7 @@ export default function FilterBar() {
                 {/* Filters */}
                 <div className={`
                     transition-all duration-300 overflow-hidden
-                    ${showFilters ? 'max-h-125' : 'max-h-0 md:max-h-100'}
+                    ${showFilters ? 'max-h-125' : 'max-h-0'}
                 `}>
 
                     <div className="flex items-center gap-2 my-6 mx-1">

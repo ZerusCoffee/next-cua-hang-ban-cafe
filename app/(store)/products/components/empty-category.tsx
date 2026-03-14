@@ -9,9 +9,6 @@ export default function EmptyCategory() {
             <h3 className="text-lg font-medium text-amber-800 mb-2">
                 Chưa có sản phẩm
             </h3>
-            <p className="text-sm text-gray-500">
-                Danh mục này hiện chưa có sản phẩm nào
-            </p>
         </div>
     )
 }
