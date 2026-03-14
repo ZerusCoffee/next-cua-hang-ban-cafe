@@ -22,11 +22,17 @@ export const CheckoutRequestSchema = z.object({
 });
 
 // Schema cho checkout response
-export const CheckoutResponseSchema = z.object({
+export const OrderSchema = z.object({
   order_number: z.string(),
   total: z.number(),
   status: z.string(),
   payment_url: z.string().optional(), // Cho VNPAY/MOMO/PayPal
+});
+
+export const CheckoutResponseSchema = z.object({
+  status: z.string(),
+  message: z.string(),
+  data: OrderSchema,
 });
 
 // Types
