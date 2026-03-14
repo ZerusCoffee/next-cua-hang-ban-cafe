@@ -33,10 +33,11 @@ export const CartItemComponent = ({
     <div className="flex gap-4 bg-white p-4 rounded-lg border">
       <div className="w-24 h-24 relative shrink-0">
         <Image
-          src={imageSrc}
+          src={`${imageSrc}`}
           alt={item.product_name}
           fill
           className="object-cover rounded"
+          unoptimized
         />
       </div>
 

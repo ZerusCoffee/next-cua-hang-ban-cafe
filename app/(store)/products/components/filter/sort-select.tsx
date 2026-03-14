@@ -17,8 +17,6 @@ export default function SorSelect({ sortBy, setSortBy }: { sortBy: string, setSo
                     <SelectItem value="price-asc">Giá: Thấp đến cao</SelectItem>
                     <SelectItem value="price-desc">Giá: Cao đến thấp</SelectItem>
                     <SelectItem value="newest">Mới nhất</SelectItem>
-                    <SelectItem value="popular">Phổ biến</SelectItem>
-                    <SelectItem value="sold">Bán chạy</SelectItem>
                 </SelectContent>
             </Select>
         </div>

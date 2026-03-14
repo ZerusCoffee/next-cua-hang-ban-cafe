@@ -41,22 +41,6 @@ const SearchIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const FilterIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-    />
-  </svg>
-);
 
 const CloseIcon = ({ className }: { className?: string }) => (
   <svg
@@ -86,7 +70,6 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchMode, setSearchMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAdvancedFilter, setShowAdvancedFilter] = useState(false);
   const { user, isLoading, mutate } = useUser();
   const router = useRouter();
   const headerRef = useRef<HTMLElement>(null);
@@ -239,14 +222,6 @@ export function Header() {
                       />
                     </div>
 
-                    {/* Nút filter tìm kiếm nâng cao - chỉ hiện trên desktop */}
-                    <button
-                      type="button"
-                      onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
-                      className={`hidden bg-white md:block ml-2 p-3 rounded-xl border animate-search ${showAdvancedFilter ? "bg-amber-100 border-amber-500 text-amber-700" : "border-gray-300 text-gray-700 hover:bg-gray-100"}`}
-                    >
-                      <FilterIcon className="h-5 w-5" />
-                    </button>
 
                     {/* Nút đóng chế độ tìm kiếm */}
                     <button
@@ -254,7 +229,6 @@ export function Header() {
                       onClick={() => {
                         setSearchMode(false);
                         setSearchQuery("");
-                        setShowAdvancedFilter(false);
                       }}
                       className="ml-2 p-3 rounded-xl border bg-white border-gray-300 text-gray-700 hover:bg-gray-100 animate-search"
                     >
@@ -262,62 +236,6 @@ export function Header() {
                     </button>
                   </div>
 
-                  {/* Advanced Filter Panel - chỉ hiện trên desktop */}
-                  {showAdvancedFilter && (
-                    <div className="hidden md:block absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-50">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Loại sản phẩm
-                          </label>
-                          <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                            <option value="">Tất cả</option>
-                            <option value="coffee">Cà phê</option>
-                            <option value="tea">Trà</option>
-                            <option value="cake">Bánh ngọt</option>
-                            <option value="other">Khác</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Giá tiền
-                          </label>
-                          <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                            <option value="">Mọi mức giá</option>
-                            <option value="under-50">Dưới 50,000đ</option>
-                            <option value="50-100">50,000đ - 100,000đ</option>
-                            <option value="over-100">Trên 100,000đ</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Sắp xếp theo
-                          </label>
-                          <select className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
-                            <option value="relevance">Liên quan nhất</option>
-                            <option value="price-low">Giá thấp đến cao</option>
-                            <option value="price-high">Giá cao đến thấp</option>
-                            <option value="popular">Phổ biến nhất</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="flex justify-end mt-4">
-                        <button
-                          type="button"
-                          onClick={() => setShowAdvancedFilter(false)}
-                          className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 mr-2"
-                        >
-                          Hủy
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 text-sm"
-                        >
-                          Áp dụng bộ lọc
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </form>
               </div>
             )}

@@ -1,6 +1,7 @@
 'use client'
 import ProductCard from '@/components/product/product-card';
 import { ProductCardType } from '@/types/product.type';
+import EmptyCategory from './empty-category';
 
 interface ProductGridProps {
     products: ProductCardType[];
@@ -9,8 +10,8 @@ interface ProductGridProps {
 
 export default function ProductGrid({ products, className = '' }: ProductGridProps) {
 
-    if (!products) {
-        return;
+    if (products.length === 0) {
+        return (<EmptyCategory />);
     }
 
     return (
