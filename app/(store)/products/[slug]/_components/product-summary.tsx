@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useCart } from "@/hooks/use-cart";
 import { OptionState } from "@/hooks/use-option";
 import { formatPrice } from "@/lib/utils";
-import { addItemToCart, useCart } from "@/services/cart";
+import { addItemToCart } from "@/services/cart";
 import { OptionGroup } from "@/types/option.type";
 import { CartItemOption } from "@/validation/cart.schema";
 import { Minus, Plus, ShoppingBag } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCart } from "@/services/cart";
+import { useCart } from "@/hooks/use-cart";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -13,7 +13,7 @@ export function CartButton({ className = "", onClick }: CartButtonProps) {
   const { cart } = useCart();
   const itemCount = cart?.total_quantity || 0;
 
-  return (
+  return (  
     <Link href="/cart" onClick={onClick} className="relative inline-block">
       <div
         className={`p-2 rounded-lg hover:bg-amber-700 cursor-pointer transition-colors ${className}`}

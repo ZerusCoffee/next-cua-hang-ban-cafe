@@ -1,12 +1,6 @@
 import api from "@/config/axios";
-import { AddItemPayload, Cart } from "@/validation/cart.schema";
+import { AddItemPayload } from "@/validation/cart.schema";
 import { AxiosError } from "axios";
-import useSWR from "swr";
-
-export function useCart() {
-  const { data, error, isLoading, mutate } = useSWR(`/cart`);
-  return { cart: data?.data as Cart, error, isLoading, mutate };
-}
 
 export async function addItemToCart(payload: AddItemPayload) {
   return api

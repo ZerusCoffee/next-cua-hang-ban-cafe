@@ -26,6 +26,7 @@ export const OrderSchema = z.object({
   order_number: z.string(),
   total: z.number(),
   status: z.string(),
+  payment_method: z.string(),
   payment_url: z.string().optional(), // Cho VNPAY/MOMO/PayPal
 });
 
