@@ -3,7 +3,8 @@
 import { CartItemComponent } from "@/components/cart/CartItemComponent";
 import { CartSummary } from "@/components/cart/CartSummary";
 import { EmptyCart } from "@/components/cart/EmptyCart";
-import { clearCart, removeItemFromCart, useCart } from "@/services/cart";
+import { useCart } from "@/hooks/use-cart";
+import { clearCart, removeItemFromCart } from "@/services/cart";
 import { toast } from "sonner";
 
 export default function CartPage() {
