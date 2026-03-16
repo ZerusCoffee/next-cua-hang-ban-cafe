@@ -14,6 +14,7 @@ export function proxy(request: NextRequest) {
 
   const protectedRoutes = [
     "/cart",
+    "/checkout",
     "/account",
     "/account/address",
     "/account/coupons",

@@ -8,7 +8,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useAddress, useDefaultAddress } from "@/services/address";
-import { useCart } from "@/services/cart";
 import { CheckOut } from "@/services/checkout";
 import { Address } from "@/types/address.type";
 import {
@@ -25,6 +24,7 @@ import AddAddressDialog from "@/components/dialog/add-address-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { useCart } from "@/hooks/use-cart";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -76,12 +76,13 @@ export default function CheckoutPage() {
     setProcessing(true);
     try {
       const res = await CheckOut(data);
-      console.log("RES: " + res);
       mutate(null, false);
-      console.log("Payment URL: " + res.data.payment_url);
-      router.push(res.data.payment_url ?? "/");
+      if (res.data.payment_method === "cod") {
+        router.push(`/account/orders/${res.data.order_number}`);
+      } else {
+        router.push(res.data.payment_url ?? "/");
+      }
       toast.success("Đặt hàng thành công!");
-      console.log(res);
     } catch (e) {
       toast.error("Lỗi đặt hàng" + e);
     } finally {
