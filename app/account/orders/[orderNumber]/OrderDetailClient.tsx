@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ItemDetail, OrderDetail } from "@/types/order.type";
+import Image from "next/image";
 
 const statusConfig = {
   pending: {
@@ -82,14 +83,16 @@ interface OrderDetailClientProps {
 }
 
 export default function OrderDetailClient({ order }: OrderDetailClientProps) {
-  const StatusIcon = statusConfig[order.status].icon;
-  const PaymentStatusIcon = paymentStatusConfig[order.payment_status].icon;
+  const StatusIcon = statusConfig[order.status]?.icon || Clock;
+  const PaymentStatusIcon =
+    paymentStatusConfig[order.payment_status]?.icon || Clock;
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: string | number) => {
+    const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
-    }).format(amount);
+    }).format(numAmount);
   };
 
   const formatDate = (dateString: string) => {
@@ -117,10 +120,10 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                     Trạng thái đơn hàng
                   </p>
                   <Badge
-                    className={`${statusConfig[order.status].color} border-0`}
+                    className={`${statusConfig[order.status]?.color || "bg-gray-100 text-gray-800"} border-0`}
                   >
                     <StatusIcon className="w-3 h-3 mr-1" />
-                    {statusConfig[order.status].label}
+                    {statusConfig[order.status]?.label || order.status}
                   </Badge>
                 </div>
                 <Package className="w-8 h-8 text-gray-400" />
@@ -136,10 +139,11 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                     Trạng thái thanh toán
                   </p>
                   <Badge
-                    className={`${paymentStatusConfig[order.payment_status].color} border-0`}
+                    className={`${paymentStatusConfig[order.payment_status]?.color || "bg-gray-100 text-gray-800"} border-0`}
                   >
                     <PaymentStatusIcon className="w-3 h-3 mr-1" />
-                    {paymentStatusConfig[order.payment_status].label}
+                    {paymentStatusConfig[order.payment_status]?.label ||
+                      order.payment_status}
                   </Badge>
                 </div>
                 <CreditCard className="w-8 h-8 text-gray-400" />
@@ -159,8 +163,19 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                 {order.items.map((item: ItemDetail) => (
                   <div key={item.id}>
                     <div className="flex gap-4">
-                      <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                        <Package className="w-8 h-8 text-gray-400" />
+                      <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+                        {item.product_image ? (
+                          <Image
+                            src={item.product_image}
+                            alt={item.product_name}
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-cover"
+                            unoptimized={true}
+                          />
+                        ) : (
+                          <Package className="w-8 h-8 text-gray-400" />
+                        )}
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between">
@@ -173,36 +188,25 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                           SKU: {item.product_sku}
                         </p>
 
-                        {/* Options */}
                         {item.options && item.options.length > 0 && (
-                          <div className="mt-3 space-y-2">
-                            {item.options.map((group) => (
-                              <div key={group.groupId} className="text-sm">
-                                <span className="font-medium text-gray-700">
-                                  {group.groupName}:
-                                </span>
-                                <div className="flex flex-wrap gap-2 mt-1">
-                                  {group.options.map((option) => (
-                                    <Badge
-                                      key={option.id}
-                                      variant="outline"
-                                      className="bg-gray-50"
-                                    >
-                                      {option.value}
-                                      {option.additionalPrice > 0 && (
-                                        <span className="ml-1 text-primary">
-                                          (+
-                                          {formatCurrency(
-                                            option.additionalPrice,
-                                          )}
-                                          )
-                                        </span>
-                                      )}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
+                          <div className="mt-3">
+                            <div className="flex flex-wrap gap-2">
+                              {item.options.map((option) => (
+                                <Badge
+                                  key={option.option_id}
+                                  variant="outline"
+                                  className="bg-gray-50"
+                                >
+                                  {option.group_name}: {option.option_value}
+                                  {parseFloat(option.additional_price) > 0 && (
+                                    <span className="ml-1 text-primary">
+                                      (+
+                                      {formatCurrency(option.additional_price)})
+                                    </span>
+                                  )}
+                                </Badge>
+                              ))}
+                            </div>
                           </div>
                         )}
 
@@ -297,10 +301,11 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Trạng thái:</span>
                   <Badge
-                    className={`${paymentStatusConfig[order.payment_status].color} border-0`}
+                    className={`${paymentStatusConfig[order.payment_status]?.color || "bg-gray-100 text-gray-800"} border-0`}
                   >
                     <PaymentStatusIcon className="w-3 h-3 mr-1" />
-                    {paymentStatusConfig[order.payment_status].label}
+                    {paymentStatusConfig[order.payment_status]?.label ||
+                      order.payment_status}
                   </Badge>
                 </div>
               </CardContent>

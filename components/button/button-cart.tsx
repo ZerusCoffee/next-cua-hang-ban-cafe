@@ -11,7 +11,7 @@ interface CartButtonProps {
 
 export function CartButton({ className = "", onClick }: CartButtonProps) {
   const { cart } = useCart();
-  const itemCount = cart?.count || 0;
+  const itemCount = cart?.total_quantity || 0;
 
   return (
     <Link href="/cart" onClick={onClick} className="relative inline-block">

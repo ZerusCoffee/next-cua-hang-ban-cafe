@@ -57,6 +57,7 @@ export default function CheckoutPage() {
     setProcessing(true);
     try {
       const res = await CheckOut(data);
+      console.log("RES: " + res);
       mutate(null, false);
       console.log("Payment URL: " + res.data.payment_url);
       router.push(res.data.payment_url ?? "/");

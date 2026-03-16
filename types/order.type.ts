@@ -1,5 +1,3 @@
-import { OptionGroup } from "./option.type";
-
 export interface Order {
   id: number;
   order_number: string;
@@ -34,7 +32,7 @@ export interface OrderDetail {
   shipping_ward: string;
   shipping_province: string;
   payment_method: string;
-  payment_status: "pending" | "paid" | "failed";
+  payment_status: "pending" | "paid" | "failed" | "refunded";
   status: "pending" | "confirmed" | "delivered" | "cancelled";
   customer_notes: string | null;
   admin_notes: string | null;
@@ -49,11 +47,19 @@ export interface ItemDetail {
   product_id: number;
   product_name: string;
   product_sku: string;
+  product_image: string;
   price: number;
   unit_cost: number;
   quantity: number;
-  options: OptionGroup[];
+  options: OptionItemDetail[];
   subtotal: number;
+}
+export interface OptionItemDetail {
+  option_id: number;
+  group_name: string;
+  option_value: string;
+  additional_price: string;
+  product_option_id: number;
 }
 export interface OrderAPIResponse {
   status: string;

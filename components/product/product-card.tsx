@@ -11,6 +11,8 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
   const [isHovered, setIsHovered] = useState(false);
   if (!product) return;
 
+  const outOfStock = product.inStock === false;
+
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -28,9 +30,20 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             alt={product.name}
             width={250}
             height={250}
-            className={`w-full h-full object-contain p-1 sm:p-2 transition-all duration-300 ${isHovered ? "scale-110" : "scale-100"}`}
+            className={`w-full h-full object-contain p-1 sm:p-2 transition-all duration-300 ${
+              isHovered ? "scale-110" : "scale-100"
+            } ${outOfStock ? "opacity-50 grayscale" : ""}`}
             unoptimized
           />
+
+          {/* Badge hết hàng */}
+          {outOfStock && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="bg-gray-800/70 text-white text-xs font-bold px-3 py-1 rounded-full">
+                Hết hàng
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Thông tin sản phẩm */}
@@ -42,10 +55,11 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(4)
-                      ? "text-amber-500 fill-amber-500"
-                      : "text-amber-300"
-                      }`}
+                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                      i < Math.floor(4)
+                        ? "text-amber-500 fill-amber-500"
+                        : "text-amber-300"
+                    }`}
                   />
                 ))}
               </div>
@@ -65,19 +79,22 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             {product.shortDescription}
           </p>
 
-          {/* Giá và nút xem ngay */}
+          {/* Giá và nút */}
           <div className="flex items-center justify-between mt-auto pt-2 border-t border-amber-200">
             <span className="text-sm md:text-base font-extrabold text-amber-900">
               {formatPrice(product.price)}
             </span>
-
             <Button
-              className={`px-2 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${isHovered
-                ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
-                : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
-                }`}
+              disabled={outOfStock}
+              className={`px-2 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${
+                outOfStock
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : isHovered
+                    ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
+                    : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
+              }`}
             >
-              Xem ngay
+              {outOfStock ? "Hết hàng" : "Xem ngay"}
             </Button>
           </div>
         </div>

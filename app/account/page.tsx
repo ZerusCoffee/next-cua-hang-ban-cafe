@@ -189,7 +189,6 @@ export default function AccountPage() {
                   >
                     <Package className="h-5 w-5" />
                     Đơn hàng của tôi
-                    <Badge className="ml-auto bg-primary">3</Badge>
                   </Link>
 
                   <Link
