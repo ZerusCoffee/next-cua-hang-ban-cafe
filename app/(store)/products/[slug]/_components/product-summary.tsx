@@ -73,7 +73,7 @@ export default function ProductSummary({
     try {
       await addItemToCart({
         product_id: productId,
-        quantity: 1,
+        quantity,
         options,
       });
       mutate();

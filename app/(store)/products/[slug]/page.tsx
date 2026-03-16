@@ -3,6 +3,7 @@ import ImagesCard from './_components/images-card';
 import DescriptionCard from './_components/description-card';
 import ActionSection from './_components/action-section';
 import ProductCarousel from '@/components/product/product-carousel';
+import { notFound, redirect } from 'next/navigation';
 
 export default async function ProductDetailPage({
   params,
@@ -10,13 +11,16 @@ export default async function ProductDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params;
-  console.log(slug)
-  const productData = await productService.getProductBySlug(slug)
+
+  const productData = await productService.getProductBySlug(slug);
+  const product = productData.data;
+
+  if (!product) notFound();
+  console.log(product)
+  if (!product.inStock) redirect("/products");
 
   const relatedProducts = await productService.getRelatedProducts(slug);
 
-  const product = productData.data;
-  if (!product) return;
 
   const images = product.images.length > 0 ? product.images : [
     '/assets/images/mask-img.png',
