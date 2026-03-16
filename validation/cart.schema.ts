@@ -34,7 +34,7 @@ export const CartItemSchema = z.object({
 
 export const CartSchema = z.object({
   items: z.array(CartItemSchema),
-  count: z.number(),
+  total_quantity: z.number(),
   subtotal: z.number(),
 });
 

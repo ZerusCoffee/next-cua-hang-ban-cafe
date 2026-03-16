@@ -13,9 +13,7 @@ interface PageProps {
 
 export default async function OrderDetailPage({ params }: PageProps) {
   const { orderNumber } = await params;
-  console.log("params: " + orderNumber);
   const response = await getOrderDetail(orderNumber);
-  console.log("res: " + JSON.stringify(response));
 
   if (!response?.data) {
     return (

@@ -1,21 +1,22 @@
 import { Category } from "./category.type";
 
 export interface Product {
-    id: number ,
-    category: Category,
-    name: string,
-    slug: string,
-    sku: string,
-    price: number,
-    shortDescription: string,
-    description: string,
-    isFeatured: true,
-    isActive: true,
-    viewCount: number,
-    primaryImage: string | null,
-    images: string[]
-    created_at: Date,
-    updated_at: Date
+  id: number;
+  category: Category;
+  name: string;
+  slug: string;
+  sku: string;
+  price: number;
+  shortDescription: string;
+  description: string;
+  isFeatured: true;
+  isActive: true;
+  viewCount: number;
+  primaryImage: string | null;
+  images: string[];
+  inStock: boolean;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export type ProductCardType = Pick<
@@ -29,6 +30,7 @@ export type ProductCardType = Pick<
   | "viewCount"
   | "sku"
   | "primaryImage"
+  | "inStock"
 >;
 
 export type ProductQueryParams = {
