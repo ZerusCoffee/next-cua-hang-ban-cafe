@@ -30,7 +30,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { cart, isLoading: cartLoading, mutate } = useCart();
   const { addresses, mutate: refreshAddresses } = useAddress();
-  const { address: defaultAddress } = useDefaultAddress();
+  const { address } = useDefaultAddress();
 
   const [step, setStep] = useState<"address" | "payment" | "review">("address");
   const [processing, setProcessing] = useState(false);
@@ -42,8 +42,15 @@ export default function CheckoutPage() {
     defaultValues: { payment_method: "cod", customer_notes: "" },
   });
 
+  // console.log('address' , address)
+  const defaultAddress = address || null
+
   useEffect(() => {
-    if (defaultAddress && !selectedAddress) {
+    // console.log('default_address', defaultAddress);
+    // console.log('selected :', selectedAddress)
+    if (!defaultAddress && !selectedAddress) return;
+
+    else if (defaultAddress && !selectedAddress) {
       setSelectedAddress(defaultAddress);
       form.setValue("shipping_full_name", defaultAddress.full_name);
       form.setValue("shipping_phone", defaultAddress.phone);
@@ -51,6 +58,18 @@ export default function CheckoutPage() {
       form.setValue("shipping_ward", defaultAddress.ward);
       form.setValue("shipping_address_details", defaultAddress.details);
     }
+
+    else {
+      setSelectedAddress(selectedAddress);
+      if(!selectedAddress) return
+      form.setValue("shipping_full_name", selectedAddress.full_name);
+      form.setValue("shipping_phone", selectedAddress.phone);
+      form.setValue("shipping_province", selectedAddress.province);
+      form.setValue("shipping_ward", selectedAddress.ward);
+      form.setValue("shipping_address_details", selectedAddress.details);
+    }
+
+    console.log(form.getValues())
   }, [defaultAddress, form, selectedAddress]);
 
   const onHandleSubmit = async (data: CheckoutRequest) => {
@@ -123,12 +142,12 @@ export default function CheckoutPage() {
                         ? "bg-green-600 hover:bg-green-700"
                         : "bg-primary"
                     }
-                    disabled={processing}
+                    disabled={processing || !selectedAddress}
                     onClick={
                       step === "review"
                         ? form.handleSubmit(onHandleSubmit)
                         : () =>
-                            setStep(step === "address" ? "payment" : "review")
+                          setStep(step === "address" ? "payment" : "review")
                     }
                   >
                     {processing ? (

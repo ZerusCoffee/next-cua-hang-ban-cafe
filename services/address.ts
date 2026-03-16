@@ -2,7 +2,7 @@ import api from "@/config/axios";
 import { Address } from "@/types/address.type";
 import { addressSchema } from "@/validation/address.schema";
 import { AxiosError } from "axios";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import z from "zod";
 
 interface Ward {
@@ -46,12 +46,25 @@ export function useWards(province_code: string | null | undefined) {
 }
 
 export function useAddress() {
-  const { data, error, isLoading, mutate } = useSWR(`/address`);
-  return { addresses: data?.data as Address[], error, isLoading, mutate };
+  const { data, error, isLoading, mutate } = useSWR(
+    'address',
+    () => api.get('/address').then(res => res.data)
+  );
+
+  return {
+    addresses: data?.data as Address[],
+    error,
+    isLoading,
+    mutate
+  };
 }
 
 export function useDefaultAddress() {
-  const { data, error, isLoading, mutate } = useSWR(`/address/default`);
+  const { data, error, isLoading, mutate } = useSWR(
+    '/address/default',
+    (url) => api.get(url).then(res => res.data)
+  );
+
   return { address: data?.data as Address, error, isLoading, mutate };
 }
 
@@ -92,4 +105,18 @@ export async function setDefaultAddressById(id: string) {
     .patch(`/address/${id}/set-default`)
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
+}
+
+export function useDeleteAddress() {
+
+  const deleteAddressById = async (id: number) => {
+    await deleteAddress(id);
+
+    await Promise.all([
+      mutate('/address'),
+      mutate('/address/default')
+    ]);
+  };
+
+  return { deleteAddressById };
 }

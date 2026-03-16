@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { deleteAddress, useAddress } from "@/services/address";
+import { useAddress, useDeleteAddress } from "@/services/address";
 import { Address } from "@/types/address.type";
 import {
   Check,
@@ -34,7 +34,7 @@ export default function AddressPage() {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
 
   const { addresses, isLoading, mutate } = useAddress();
-
+  const { deleteAddressById } = useDeleteAddress()
   const handleEdit = (address: Address) => {
     setSelectedAddress(address);
     setIsEditDialogOpen(true);
@@ -43,7 +43,7 @@ export default function AddressPage() {
   const handleDelete = async (id: number) => {
     if (confirm("Bạn có chắc chắn muốn xóa địa chỉ này?")) {
       try {
-        await deleteAddress(id);
+        await deleteAddressById(id);
         toast.success("Xóa địa chỉ thành công!");
         mutate();
       } catch (error: unknown) {
