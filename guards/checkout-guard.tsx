@@ -11,7 +11,7 @@ export default function CheckoutGuard({
   const { cart } = useCart();
 
   if (!cart?.items?.length) {
-    return notFound();
+    return null;
   }
 
   return <>{children}</>;

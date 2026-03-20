@@ -15,8 +15,8 @@ export interface Product {
   primaryImage: string | null;
   images: string[];
   inStock: boolean;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type ProductCardType = Pick<
@@ -31,6 +31,7 @@ export type ProductCardType = Pick<
   | "sku"
   | "primaryImage"
   | "inStock"
+  | "updatedAt"
 >;
 
 export type ProductQueryParams = {
