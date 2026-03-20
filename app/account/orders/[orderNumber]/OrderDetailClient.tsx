@@ -244,12 +244,25 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
             {order.customer_notes && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">
+                  <CardTitle className="text-lg text-green-600">
                     Ghi chú của khách hàng
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700">{order.customer_notes}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {order.admin_notes && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg text-red-400">
+                    Lí do hủy đơn :
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700">{order.admin_notes}</p>
                 </CardContent>
               </Card>
             )}

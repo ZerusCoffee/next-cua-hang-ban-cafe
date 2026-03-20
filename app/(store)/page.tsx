@@ -6,12 +6,7 @@ import ProductSliderSkeleton from "@/components/product/product-silder-skeleton"
 import Feature from "./components/feature";
 import Newest from "./components/newest";
 import Gallery from "./components/gallery";
-import { Metadata } from "next";
 
-
-export const metadata: Metadata = {
-  title: "Trang chủ | Zerus Coffee",
-};
 
 export default function HomePage() {
   return (

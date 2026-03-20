@@ -1,4 +1,3 @@
-import api from "@/config/axios";
 import { Paginated } from "@/types/common/pagination.type";
 import { ApiResponse } from "@/types/common/response.type";
 import { OptionGroup } from "@/types/option.type";
@@ -14,7 +13,7 @@ export const productService = {
         return fetcher("/product/newest");
     },
 
-    getProducts: async (params?: ProductQueryParams) : Promise<ApiResponse<Paginated<ProductCardType>>> => {
+    getProducts: async (params?: ProductQueryParams, isCache?: boolean) : Promise<ApiResponse<Paginated<ProductCardType>>> => {
         const query = new URLSearchParams(
             Object.entries(params ?? {}).reduce((acc, [key, value]) => {
             if (value !== undefined && value !== null) {
@@ -24,15 +23,15 @@ export const productService = {
             }, {} as Record<string, string>)
         )
 
-        return fetcher(`/product?${query.toString()}`)
+        return fetcher(`/product?${query.toString()}`, isCache)
     },
 
     getMaxPrice: async () : Promise<ApiResponse<number>> => {
         return fetcher("/product/max-price");
     },
 
-    getProductBySlug: async(slug: string): Promise<ApiResponse<Product>> => {
-        return fetcher(`/product/${slug}`)
+    getProductBySlug: async(slug: string, isCache: boolean): Promise<ApiResponse<Product>> => {
+        return fetcher(`/product/${slug}`, isCache)
     },
 
     getOptionsBySlug: async(slug: string) : Promise<ApiResponse<OptionGroup[]>> =>{

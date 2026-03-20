@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { productService } from "@/services/product-service";
 import { ProductCardType, ProductQueryParams } from "@/types/product.type";
 import useSWRInfinite from "swr/infinite";
-import { productLimit } from "@/app/constants/const";
+import { productLimit } from "@/constants/const";
 import { Paginated } from "@/types/common/pagination.type";
 import { ApiResponse } from "@/types/common/response.type";
 
