@@ -76,7 +76,7 @@ export function ReviewStep({
         {notes && (
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-1 text-sm">Ghi chú:</h3>
-            <p className="text-sm italic text-gray-600">&quot{notes}&quot</p>
+            <p className="text-sm italic text-gray-600">{notes}</p>
           </div>
         )}
       </CardContent>
