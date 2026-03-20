@@ -1,15 +1,15 @@
 "use client";
 
 import { useCart } from "@/hooks/use-cart";
-import { notFound } from "next/navigation";
 
 export default function CheckoutGuard({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { cart } = useCart();
+  const { cart, isLoading } = useCart();
 
+  if (isLoading) return null;
   if (!cart?.items?.length) {
     return null;
   }
