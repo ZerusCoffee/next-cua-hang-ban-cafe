@@ -23,6 +23,7 @@ export const ButtonLoginGoogle = () => {
       }
     },
     flow: "auth-code",
+    ux_mode: "popup",
   });
   return (
     <Button
