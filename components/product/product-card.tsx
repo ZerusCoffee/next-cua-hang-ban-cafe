@@ -9,6 +9,8 @@ import { Button } from "../ui/button";
 
 export default function ProductCard({ product }: { product: ProductCardType }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldPrefetch, setShouldPrefetch] = useState(false)
+
   if (!product) return;
 
   const outOfStock = product.inStock === false;
@@ -16,9 +18,13 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
   return (
     <Link
       href={`/products/${product.slug}`}
+      prefetch={shouldPrefetch}
       className="no-underline hover:no-underline block h-full"
       onClick={(e) => {
         if (!product.inStock) e.preventDefault();
+      }}
+      onMouseEnter={() => {
+        if (!shouldPrefetch) setShouldPrefetch(true);
       }}
     >
       <div
@@ -58,8 +64,8 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
                   <Star
                     key={i}
                     className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(4)
-                        ? "text-amber-500 fill-amber-500"
-                        : "text-amber-300"
+                      ? "text-amber-500 fill-amber-500"
+                      : "text-amber-300"
                       }`}
                   />
                 ))}
@@ -88,10 +94,10 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             <Button
               disabled={outOfStock}
               className={`px-2 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${outOfStock
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : isHovered
-                    ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
-                    : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : isHovered
+                  ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
+                  : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
                 }`}
             >
               {outOfStock ? "Hết hàng" : "Xem ngay"}
