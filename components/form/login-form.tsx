@@ -110,7 +110,7 @@ export function LoginForm({
       <div className="text-center text-sm">
         Chưa có tài khoản?{" "}
         <a
-          href="/account/register"
+          href="/register"
           className="hover:underline underline-offset-4 text-amber-700"
         >
           Đăng ký
