@@ -79,7 +79,7 @@ export async function generateMetadata({ searchParams }: SearchParamsProps): Pro
         siteName: "Tiệm Cà Phê Zerus",
         images: [
           {
-            url: "/logo-og.png",
+            url: "/og_img.jpg",
             width: 1200,
             height: 630,
             alt: "Thực đơn Zerus Cafe",
@@ -131,7 +131,7 @@ export async function generateMetadata({ searchParams }: SearchParamsProps): Pro
         siteName: "Tiệm Cà Phê Zerus",
         images: [
           {
-            url: "/logo-og.png",
+            url: "/og_img.jpg",
             width: 1200,
             height: 630,
             alt: "Thực đơn đa dạng tại Tiệm Cafe Zerus",

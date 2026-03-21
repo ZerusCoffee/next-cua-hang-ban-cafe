@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     url: `${baseUrl}`,
     siteName: "Tiệm Cà Phê Zerus",
     images: {
-      url: "/logo_og.png",
+      url: "/og_img.jpg",
       width: 1200,
       height: 630,
       alt: "Cà Phê Zerus",
