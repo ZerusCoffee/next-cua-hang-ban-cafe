@@ -85,7 +85,7 @@ export function Header() {
 
     const navButtons =
       buttonRef.current.querySelectorAll<HTMLElement>(".animate-btn");
-
+    console.log(navButtons)
     const setHomeInitial = () => {
       headerRef.current!.style.backgroundColor = "transparent";
       headerRef.current!.style.backdropFilter = "blur(0px)";
@@ -242,7 +242,7 @@ export function Header() {
             {/* User actions - ẩn khi ở chế độ tìm kiếm */}
             <div
               ref={buttonRef}
-              className={`flex items-center space-x-4 ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+              className={`flex items-center md:space-x-4 ${searchMode ? "opacity-0 pointer-events-none" : "opacity-100"}`}
             >
               {/* Nút tìm kiếm (chỉ hiện trên desktop khi không ở chế độ tìm kiếm) */}
               <button
@@ -257,7 +257,7 @@ export function Header() {
               </If>
 
               <If isTrue={!!user && !isLoading}>
-                <CartButton className={`hidden md:block animate-btn ${isHome ? "text-white" : "text-gray-700"}`} />
+                <CartButton className={`animate-btn ${isHome ? "text-white" : "text-gray-700"}`} />
                 <Menu as="div" className="relative hidden md:block">
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">
@@ -376,9 +376,9 @@ export function Header() {
               {/* Mobile menu button - luôn hiển thị trên mobile */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+                className={`md:hidden p-2 rounded-lg hover:bg-gray-100 animate-btn ${isHome ? "text-white" : "text-gray-700"} `}
               >
-                <Bars3Icon className="h-6 w-6 text-gray-700" />
+                <Bars3Icon className="h-6 w-6" />
               </button>
             </div>
           </div>
@@ -391,7 +391,7 @@ export function Header() {
       <Dialog
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
-        className="md:hidden"
+        className={`md:hidden animate-btn ${isHome ? "text-white" : "text-gray-700"}`}
       >
         <div className="fixed inset-0 z-50">
           <div className="fixed inset-0 bg-black/30" />
@@ -498,12 +498,7 @@ export function Header() {
                           <p className="text-sm text-gray-500">{user?.email}</p>
                         </div>
                       </div>
-                      <div className="border-t border-gray-100 my-2 pt-2">
-                        <CartButton
-                          className="w-full justify-start text-gray-700 hover:bg-gray-100"
-                          onClick={() => setMobileMenuOpen(false)}
-                        />
-                      </div>
+
                       <div className="space-y-1">
                         <Link
                           href="/account"
