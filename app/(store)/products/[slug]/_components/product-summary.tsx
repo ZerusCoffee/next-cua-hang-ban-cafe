@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/use-cart";
 import { OptionState } from "@/hooks/use-option";
 import { formatPrice } from "@/lib/utils";
 import { addItemToCart } from "@/services/cart";
+import { useUser } from "@/services/user";
 import { OptionGroup } from "@/types/option.type";
 import { CartItemOption } from "@/validation/cart.schema";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
@@ -28,6 +29,7 @@ export default function ProductSummary({
 }: ProductSummaryType) {
   const [quantity, setQuantity] = useState(1);
 
+  const { user } = useUser();
   const handleDecrease = () => {
     if (quantity === 1) return;
     setQuantity((prev) => prev - 1);
@@ -38,6 +40,11 @@ export default function ProductSummary({
   const handleAddtoCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!user) {
+      toast.warning("Vui lòng đăng nhập để thêm giỏ hàng")
+      return;
+    }
 
     const options: CartItemOption[] = [];
 

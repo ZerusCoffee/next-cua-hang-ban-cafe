@@ -49,7 +49,7 @@ export default function OptionCard({ optionGroups, optionState, dispatch }: Opti
                                         grid gap-2
                                         ${group.options.length <= 2 ? 'grid-cols-2' : ''}
                                         ${group.options.length === 3 ? 'grid-cols-3' : ''}
-                                        ${group.options.length >= 4 ? 'grid-cols-2 md:grid-cols-3' : ''}
+                                        ${group.options.length >= 4 ? 'grid-cols-1 md:grid-cols-3' : ''}
                                     `}
                                     >
                                         {group.options.map((option) => {

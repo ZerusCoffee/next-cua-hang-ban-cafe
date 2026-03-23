@@ -37,7 +37,6 @@ export const CartItemComponent = ({
           alt={item.product_name}
           fill
           className="object-cover rounded"
-          unoptimized
         />
       </div>
 
