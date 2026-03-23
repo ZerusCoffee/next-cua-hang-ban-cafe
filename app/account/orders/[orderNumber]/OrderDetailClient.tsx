@@ -171,7 +171,6 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                             width={80}
                             height={80}
                             className="w-full h-full object-cover"
-                            unoptimized={true}
                           />
                         ) : (
                           <Package className="w-8 h-8 text-gray-400" />

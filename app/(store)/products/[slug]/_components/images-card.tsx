@@ -31,7 +31,6 @@ export default function ImagesCard({ images, productName }: { images: string[], 
                     fill
                     className="object-cover transition-transform duration-300"
                     priority={currentIndex === 0}
-                    unoptimized
                     sizes="(max-width: 768px) 100vw, 45vw"
                 />
 
@@ -76,7 +75,6 @@ export default function ImagesCard({ images, productName }: { images: string[], 
                             onClick={() => goToSlide(idx)}
                         >
                             <Image
-                                unoptimized
                                 src={img}
                                 alt={`${productName} ${idx + 1}`}
                                 fill

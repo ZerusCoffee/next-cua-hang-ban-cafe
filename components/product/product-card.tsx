@@ -33,15 +33,14 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Hình ảnh sản phẩm */}
-        <div className="relative h-48 overflow-hidden bg-amber-100">
+        <div className="relative h-58 overflow-hidden bg-amber-100">
           <Image
             src={product.primaryImage ?? `/assets/images/mask-img.png`}
             alt={product.name}
-            width={250}
-            height={250}
-            className={`w-full h-full object-contain p-1 sm:p-2 transition-all duration-300 ${isHovered ? "scale-110" : "scale-100"
+            width={350}
+            height={350}
+            className={`w-full h-full object-cover transition-all duration-300 ${isHovered ? "scale-110" : "scale-100"
               } ${outOfStock ? "opacity-50 grayscale" : ""}`}
-            unoptimized
           />
 
           {/* Badge hết hàng */}
@@ -93,7 +92,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             </span>
             <Button
               disabled={outOfStock}
-              className={`px-2 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${outOfStock
+              className={`px-1 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${outOfStock
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : isHovered
                   ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"

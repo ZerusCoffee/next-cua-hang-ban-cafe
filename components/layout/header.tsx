@@ -86,7 +86,6 @@ export function Header() {
     const navButtons =
       buttonRef.current.querySelectorAll<HTMLElement>(".animate-btn");
 
-    console.log(buttonRef.current);
     const setHomeInitial = () => {
       headerRef.current!.style.backgroundColor = "transparent";
       headerRef.current!.style.backdropFilter = "blur(0px)";

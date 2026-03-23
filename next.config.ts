@@ -1,9 +1,13 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
-    domains: ["localhost", "127.0.0.1", "placehold.co"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'maintaindev.id.vn',
+        pathname: '/storage/**',
+      },
+    ],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
