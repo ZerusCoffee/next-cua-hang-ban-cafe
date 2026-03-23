@@ -86,12 +86,6 @@ export default function ImagesCard({ images, productName }: { images: string[], 
                 </div>
             )}
 
-            {/* Hiển thị khi chỉ có 1 ảnh */}
-            {images.length === 1 && (
-                <div className="p-2 text-center text-xs text-gray-500 border-t border-gray-200">
-                    <span className="text-orange-500">●</span> Chỉ có 1 hình ảnh
-                </div>
-            )}
         </Card>
     )
 }
