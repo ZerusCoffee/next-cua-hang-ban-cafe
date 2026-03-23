@@ -2,11 +2,11 @@ import { categoryService } from "@/services/category-service";
 import { productService } from "@/services/product-service";
 
 import { baseUrl, productLimit } from "@/constants/const";
-import CategorySection from "./components/category-section";
-import InfiniteProductList from "./components/infinite-product-list";
-import LazyCategoryProducts from "./components/lazy-category-product";
-import ProductPageHeader from "./components/product-page-header";
-import FilterBar from "./components/filter-bar";
+import CategorySection from "./_components/category-section";
+import InfiniteProductList from "./_components/infinite-product-list";
+import LazyCategoryProducts from "./_components/lazy-category-product";
+import ProductPageHeader from "./_components/product-page-header";
+import FilterBar from "./_components/filter-bar";
 
 import { Paginated } from "@/types/common/pagination.type";
 import { ProductCardType, ProductQueryParams } from "@/types/product.type";
