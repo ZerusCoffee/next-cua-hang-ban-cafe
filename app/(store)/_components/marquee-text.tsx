@@ -9,7 +9,6 @@ export default function MarqueeText() {
             <Marquee
                 speed={100}
                 gradient={false}
-                pauseOnHover
                 className="select-none"
             >
                 <div className="flex items-center">

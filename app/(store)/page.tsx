@@ -1,11 +1,11 @@
 import { Suspense } from "react";
-import About from "./components/about";
-import BannerCarousel from "./components/banner-slider";
-import MarqueeText from "./components/marquee-text";
+import About from "./_components/about";
+import BannerCarousel from "./_components/banner-slider";
+import MarqueeText from "./_components/marquee-text";
 import ProductSliderSkeleton from "@/components/product/product-silder-skeleton";
-import Feature from "./components/feature";
-import Newest from "./components/newest";
-import Gallery from "./components/gallery";
+import Feature from "./_components/feature";
+import Newest from "./_components/newest";
+import Gallery from "./_components/gallery";
 
 
 export default function HomePage() {
