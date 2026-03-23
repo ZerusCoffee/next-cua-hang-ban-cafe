@@ -37,9 +37,9 @@ export function LoginForm({
     const res = await login(data);
     if (res.status === "success" && res.data?.access_token) {
       await setJWTtoCookie(res.data.access_token);
-      toast.success(res.message);
+      mutate({ data: res.data.customer }, { revalidate: false });
       router.push("/");
-      mutate();
+      toast.success(res.message);
       return;
     } else {
       toast.error(res.message);
