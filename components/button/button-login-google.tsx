@@ -9,15 +9,15 @@ import { Button } from "../ui/button";
 
 export const ButtonLoginGoogle = () => {
   const { mutate } = useUser();
-  const route = useRouter();
+  const router = useRouter();
   const googleLogin = useGoogleLogin({
     onSuccess: async ({ code }) => {
       const response = await loginGoogle(code);
       if (response.status == "success" && response?.data?.access_token) {
         await setJWTtoCookie(response.data.access_token);
-        toast.success("Đăng nhập thành công");
-        mutate();
-        route.push("/");
+        mutate({ data: response.data.customer }, { revalidate: false });
+        router.push("/");
+        toast.success(response.message);
       } else {
         toast.error(response.message);
       }
