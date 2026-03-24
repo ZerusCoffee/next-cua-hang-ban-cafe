@@ -52,6 +52,7 @@ export default function AccountPage() {
   const { user, mutate } = useUser();
   const { addresses } = useAddress();
   const [isUploading, setIsUploading] = useState(false);
+  const [isHoverMail, setIsHoverMail] = useState(false)
 
   // Tải và xử lý hình ảnh đại diện
   const onDrop = useCallback(
@@ -171,7 +172,7 @@ export default function AccountPage() {
       <div className="container mx-auto px-4 py-8 -mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
+          <div className="hidden md:block lg:col-span-1">
             <Card className="sticky top-24 border shadow-lg">
               <CardContent className="p-6">
                 <nav className="space-y-1">
@@ -317,21 +318,41 @@ export default function AccountPage() {
                             </p>
                           </div>
                         </div>
-                        {user?.email_verified_at ? (
-                          <Badge
-                            variant="outline"
-                            className="bg-green-50 text-green-700"
-                          >
-                            Đã xác thực
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="bg-red-50 text-red-700"
-                          >
-                            Chưa xác thực
-                          </Badge>
-                        )}
+
+                        <div
+                          onMouseEnter={() => setIsHoverMail(true)}
+                          onMouseLeave={() => setIsHoverMail(false)}
+                        >
+                          {user?.email_verified_at
+                            ?
+                            (
+                              <Badge
+                                variant="outline"
+                                className="bg-green-50 text-green-700"
+                              >
+                                Đã xác thực
+                              </Badge>
+                            )
+                            :
+                            !isHoverMail ?
+                              (
+                                <Badge
+                                  variant="secondary"
+                                  className="bg-yellow-500 text-white border-0"
+                                >
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  Chưa xác thực
+                                </Badge>)
+                              :
+                              (
+                                <Button
+                                  variant="outline"
+                                  className="bg-amber-400! cursor-pointer"
+                                >
+                                  Xác thực ngay
+                                </Button>
+                              )}
+                        </div>
                       </div>
                     </div>
 
