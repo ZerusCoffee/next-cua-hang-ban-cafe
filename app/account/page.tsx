@@ -121,14 +121,14 @@ export default function AccountPage() {
                 )}
               </div>
               <div>
-                <h1 className="text-3xl font-bold">
+                <h1 className="text-2xl md:text-3xl font-bold">
                   {user?.name || "Người dùng"}
                 </h1>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-2 mt-2">
                   {user?.email_verified_at ? (
                     <Badge
                       variant="secondary"
-                      className="bg-green-500 text-white border-0"
+                      className="bg-green-500 text-white border-0 whitespace-nowrap"
                     >
                       <CheckCircle className="h-3 w-3 mr-1" />
                       Tài khoản đã xác thực
@@ -136,7 +136,7 @@ export default function AccountPage() {
                   ) : (
                     <Badge
                       variant="secondary"
-                      className="bg-yellow-500 text-white border-0"
+                      className="bg-yellow-500 text-white border-0 whitespace-nowrap"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Chưa xác thực
@@ -145,7 +145,7 @@ export default function AccountPage() {
                   {user?.created_at && (
                     <Badge
                       variant="secondary"
-                      className=" bg-amber-600 text-white border-0"
+                      className="bg-amber-600 text-white border-0 whitespace-nowrap"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Thành viên từ {dayjs(user.created_at).format("MM/YYYY")}
@@ -154,7 +154,7 @@ export default function AccountPage() {
                   {user?.updated_at && (
                     <Badge
                       variant="secondary"
-                      className="bg-purple-500 text-white border-0"
+                      className="bg-purple-500 text-white border-0 whitespace-nowrap"
                     >
                       <Clock className="h-3 w-3 mr-1" />
                       Cập nhật lần cuối{" "}
@@ -541,67 +541,6 @@ export default function AccountPage() {
                   </CardContent>
                 </Card>
               </div>
-            </div>
-
-            {/* Quick Stats - Cập nhật số địa chỉ */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <Package className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">3</p>
-                      <p className="text-sm text-gray-500">Đơn hàng</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-yellow-100 rounded-lg">
-                      <MapPin className="h-6 w-6 text-yellow-600" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">
-                        {addresses?.length || 0}
-                      </p>
-                      <p className="text-sm text-gray-500">Địa chỉ</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-orange-100 rounded-lg">
-                      <Ticket className="h-6 w-6 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">5</p>
-                      <p className="text-sm text-gray-500">Mã giảm giá</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-purple-100 rounded-lg">
-                      <Bell className="h-6 w-6 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-2xl font-bold">5</p>
-                      <p className="text-sm text-gray-500">Thông báo</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
