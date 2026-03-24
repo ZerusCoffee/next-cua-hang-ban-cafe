@@ -1,43 +1,47 @@
-import Pusher from 'pusher-js';
-import { useEffect } from 'react';
-import { getJWTfromCookie } from '@/lib/cookie';
-import { useUser } from '@/services/user';
+import { getJWTfromCookie } from "@/lib/cookie";
+import { useUser } from "@/services/user";
+import Pusher from "pusher-js";
+import { useEffect } from "react";
 
 interface OrderStatusData {
-    order_id: number;
-    order_number: string;
-    status: string;
+  order_id: number;
+  order_number: string;
+  status: string;
 }
 
-export function useOrderStatus(onStatusChange: (data: OrderStatusData) => void) {
-    const { user } = useUser();
+export function useOrderStatus(
+  onStatusChange: (data: OrderStatusData) => void,
+) {
+  const { user } = useUser();
 
-    useEffect(() => {
-        if (!user?.id) return;
+  useEffect(() => {
+    if (!user?.id) return;
 
-        let pusher: Pusher;
+    Pusher.logToConsole = true;
 
-        const init = async () => {
-            const token = await getJWTfromCookie();
-            if (!token) return;
+    let pusher: Pusher;
 
-            pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-                cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-                authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/api/broadcasting/auth`,
-                auth: {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Accept: 'application/json',
-                    },
-                },
-            });
+    const init = async () => {
+      const token = await getJWTfromCookie();
+      if (!token) return;
 
-            const channel = pusher.subscribe(`private-orders.${user.id}`);
-            channel.bind('App\\Events\\OrderStatusUpdated', onStatusChange);
-        };
+      pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+        cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+        authEndpoint: `${process.env.NEXT_PUBLIC_API_URL}/broadcasting/auth`,
+        auth: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        },
+      });
 
-        init();
+      const channel = pusher.subscribe(`private-orders.${user.id}`);
+      channel.bind("App\\Events\\OrderStatusUpdated", onStatusChange);
+    };
 
-        return () => pusher?.disconnect();
-    }, [user?.id]);
+    init();
+
+    return () => pusher?.disconnect();
+  }, [user?.id]);
 }
