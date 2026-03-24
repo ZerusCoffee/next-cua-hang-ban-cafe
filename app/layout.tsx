@@ -1,6 +1,7 @@
 import Footer from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import LayoutWrapper from "@/components/layout/layout-wrapper";
+import { OrderStatusProvider } from "@/components/provider/order-status-provider";
 import { SWRProvider } from "@/components/provider/swr-provider";
 import BusinessSchema from "@/components/schema/business-schema";
 import { Toaster } from "@/components/ui/sonner";
@@ -59,6 +60,7 @@ export default function RootLayout({
       </head>
       <body className={`antialiased`}>
         <SWRProvider>
+          <OrderStatusProvider />
           <div className="relative flex min-h-screen flex-col">
             <Header />
             <LayoutWrapper>

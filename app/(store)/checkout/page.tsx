@@ -43,13 +43,12 @@ export default function CheckoutPage() {
   });
 
   // console.log('address' , address)
-  const defaultAddress = address || null
+  const defaultAddress = address || null;
 
   useEffect(() => {
     // console.log('default_address', defaultAddress);
     // console.log('selected :', selectedAddress)
     if (!defaultAddress && !selectedAddress) return;
-
     else if (defaultAddress && !selectedAddress) {
       setSelectedAddress(defaultAddress);
       form.setValue("shipping_full_name", defaultAddress.full_name);
@@ -57,11 +56,9 @@ export default function CheckoutPage() {
       form.setValue("shipping_province", defaultAddress.province);
       form.setValue("shipping_ward", defaultAddress.ward);
       form.setValue("shipping_address_details", defaultAddress.details);
-    }
-
-    else {
+    } else {
       setSelectedAddress(selectedAddress);
-      if(!selectedAddress) return
+      if (!selectedAddress) return;
       form.setValue("shipping_full_name", selectedAddress.full_name);
       form.setValue("shipping_phone", selectedAddress.phone);
       form.setValue("shipping_province", selectedAddress.province);
@@ -69,7 +66,7 @@ export default function CheckoutPage() {
       form.setValue("shipping_address_details", selectedAddress.details);
     }
 
-    console.log(form.getValues())
+    console.log(form.getValues());
   }, [defaultAddress, form, selectedAddress]);
 
   const onHandleSubmit = async (data: CheckoutRequest) => {
@@ -139,7 +136,7 @@ export default function CheckoutPage() {
                     size="lg"
                     className={
                       step === "review"
-                        ? "bg-green-600 hover:bg-green-700"
+                        ? "bg-green-600 hover:bg-green-700 cursor-pointer"
                         : "bg-primary"
                     }
                     disabled={processing || !selectedAddress}
@@ -147,7 +144,7 @@ export default function CheckoutPage() {
                       step === "review"
                         ? form.handleSubmit(onHandleSubmit)
                         : () =>
-                          setStep(step === "address" ? "payment" : "review")
+                            setStep(step === "address" ? "payment" : "review")
                     }
                   >
                     {processing ? (
