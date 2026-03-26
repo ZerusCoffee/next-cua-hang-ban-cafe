@@ -41,7 +41,6 @@ const SearchIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-
 const CloseIcon = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +62,7 @@ const navigation = [
   { name: "Trang chủ", href: "/" },
   { name: "Sản phẩm", href: "/products" },
   { name: "Khuyến mãi", href: "/promotions" },
-  { name: "Tin tức", href: "/news" },
+  { name: "Tin tức", href: "/blogs" },
 ];
 
 export function Header() {
@@ -85,7 +84,7 @@ export function Header() {
 
     const navButtons =
       buttonRef.current.querySelectorAll<HTMLElement>(".animate-btn");
-    console.log(navButtons)
+    console.log(navButtons);
     const setHomeInitial = () => {
       headerRef.current!.style.backgroundColor = "transparent";
       headerRef.current!.style.backdropFilter = "blur(0px)";
@@ -132,7 +131,9 @@ export function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/products?searchName=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(
+        `/products?searchName=${encodeURIComponent(searchQuery.trim())}`,
+      );
       setSearchMode(false);
       setSearchQuery("");
       setMobileMenuOpen(false); // Đóng mobile menu khi tìm kiếm
@@ -221,7 +222,6 @@ export function Header() {
                       />
                     </div>
 
-
                     {/* Nút đóng chế độ tìm kiếm */}
                     <button
                       type="button"
@@ -234,7 +234,6 @@ export function Header() {
                       <CloseIcon className="h-5 w-5" />
                     </button>
                   </div>
-
                 </form>
               </div>
             )}
@@ -257,7 +256,9 @@ export function Header() {
               </If>
 
               <If isTrue={!!user && !isLoading}>
-                <CartButton className={`animate-btn ${isHome ? "text-white" : "text-gray-700"}`} />
+                <CartButton
+                  className={`animate-btn ${isHome ? "text-white" : "text-gray-700"}`}
+                />
                 <Menu as="div" className="relative hidden md:block">
                   <MenuButton className="flex items-center space-x-2 cursor-pointer">
                     <Avatar className="h-10 w-10 border-2 border-amber-200">
@@ -288,10 +289,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Hồ sơ của tôi
                           </Link>
@@ -301,10 +303,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/orders"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Đơn hàng
                           </Link>
@@ -314,10 +317,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/address"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Sổ Địa Chỉ
                           </Link>
@@ -328,10 +332,11 @@ export function Header() {
                         {({ active }) => (
                           <Link
                             href="/account/coupons"
-                            className={`block px-4 py-2 text-sm ${active
-                              ? "bg-amber-50 text-amber-700"
-                              : "text-gray-700"
-                              }`}
+                            className={`block px-4 py-2 text-sm ${
+                              active
+                                ? "bg-amber-50 text-amber-700"
+                                : "text-gray-700"
+                            }`}
                           >
                             Mã giảm giá
                           </Link>
@@ -343,8 +348,9 @@ export function Header() {
                         {({ active }) => (
                           <button
                             onClick={handleLogout}
-                            className={`block w-full text-left px-4 py-2 text-sm ${active ? "bg-red-50 text-red-600" : "text-red-500"
-                              }`}
+                            className={`block w-full text-left px-4 py-2 text-sm ${
+                              active ? "bg-red-50 text-red-600" : "text-red-500"
+                            }`}
                           >
                             Đăng xuất
                           </button>
