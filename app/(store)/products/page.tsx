@@ -4,7 +4,6 @@ import { productService } from "@/services/product-service";
 import { baseUrl, productLimit } from "@/constants/const";
 import CategorySection from "./_components/category-section";
 import InfiniteProductList from "./_components/infinite-product-list";
-import LazyCategoryProducts from "./_components/lazy-category-product";
 import ProductPageHeader from "./_components/product-page-header";
 import FilterBar from "./_components/filter-bar";
 
@@ -15,7 +14,10 @@ import { ApiResponse } from "@/types/common/response.type";
 import { SearchParamsProps } from "@/types/common/search.type";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { NoneSearchProducts } from "./_components/none-search-products";
+import { SearchProducts } from "./_components/search-products";
 
+/* ================= SEO ================= */
 
 export async function generateMetadata({ searchParams }: SearchParamsProps): Promise<Metadata> {
   const params = await searchParams;
@@ -143,9 +145,7 @@ export async function generateMetadata({ searchParams }: SearchParamsProps): Pro
   }
 }
 
-
 export default async function Page({ searchParams }: SearchParamsProps) {
-
   const params = await searchParams;
 
   const {
@@ -160,95 +160,66 @@ export default async function Page({ searchParams }: SearchParamsProps) {
     value !== undefined && value !== null && value !== ""
   );
 
-  /* ================= SEARCH MODE ================= */
+  const filters: ProductQueryParams = {
+    name: searchName,
+    min_price: minPrice ? parseFloat(minPrice) : undefined,
+    max_price: maxPrice ? parseFloat(maxPrice) : undefined,
+    category_id: categoryId ? parseInt(categoryId) : undefined,
+    sort_by: sortBy,
+    page: 1,
+    limit: productLimit
+  };
 
-  if (hasFilter) {
-    const filters = {
-      name: searchName,
-      min_price: minPrice ? parseFloat(minPrice) : undefined,
-      max_price: maxPrice ? parseFloat(maxPrice) : undefined,
-      category_id: categoryId ? parseInt(categoryId) : undefined,
-      sort_by: sortBy,
-      page: 1,
-      limit: productLimit
-    }
 
+  // Có search theo tên || category :  
+  if (hasFilter && (searchName || categoryId)) {
     const result = await productService.getProducts(filters, true);
 
+    let title = "Kết quả tìm kiếm";
+    let category = null;
+
+    if (categoryId) {
+      const { data: categoryData } = await categoryService.getCategoryById(categoryId, true);
+      category = categoryData;
+      title = searchName
+        ? `Kết quả tìm kiếm "${searchName}" trong ${category?.name}`
+        : `Sản phẩm ${category?.name}`;
+    } else if (searchName) {
+      title = `Kết quả tìm kiếm "${searchName}"`;
+    }
+
     return (
-      <div className="min-h-screen bg-[#faf7f2]">
-
-        <ProductPageHeader />
-
-        <FilterBar />
-
-        <div className="flex items-center justify-center p-3 mt-8 gap-2 text-gray-600">
-          <span className="text-3xl font-bold"> Kết quả tìm thấy</span>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 pb-16 mt-8">
-
-          <InfiniteProductList
-            initialData={result}
-            params={filters}
-          />
-
-        </div>
-
-      </div>
+      <SearchProducts
+        title={title}
+        category={category}
+        result={result}
+        filters={filters}
+      />
     );
   }
 
-  /* ================= CATEGORY MODE ================= */
 
+
+
+
+  // Không có search theo tên && category
   const res = await categoryService.getAllCategory(true);
   const categories: Category[] = res.data || [];
 
-  const ssrCategories = categories.slice(0, 3);
-  const lazyCategories = categories.slice(3);
-  const filter: ProductQueryParams = {}
-
-  const productResults: ApiResponse<Paginated<ProductCardType>>[] =
-    await Promise.all(
-      ssrCategories.map((category) =>
-        productService.getProducts({
-          category_id: category.id,
-          page: 1,
-          limit: productLimit,
-        }, true)
-      )
-    );
+  const productResults = await Promise.all(
+    categories.map((category) =>
+      productService.getProducts({
+        ...filters,
+        category_id: category.id
+      }, true)
+    )
+  );
 
   return (
-    <div className="min-h-screen bg-linear-to-b to-amber-50 from-white">
-
-      <ProductPageHeader />
-
-      <FilterBar />
-
-      <div className="max-w-7xl mx-auto px-2 pb-16 mt-8">
-        <div className="space-y-16">
-          {ssrCategories.map((category, index) => {
-            const data = productResults[index];
-
-            return (
-              <CategorySection key={category.id} category={category}>
-                <InfiniteProductList
-                  params={{ ...filter, category_id: category.id }}
-                  initialData={data}
-                />
-              </CategorySection>
-            );
-          })}
-
-          {lazyCategories.map((category) => (
-            <CategorySection key={category.id} category={category}>
-              <LazyCategoryProducts
-                params={{ ...filter, category_id: category.id }}
-              />
-            </CategorySection>
-          ))}
-        </div>
-      </div>
-    </div>
+    <NoneSearchProducts
+      categories={categories}
+      productResults={productResults}
+      filters={filters}
+    />
   );
 }

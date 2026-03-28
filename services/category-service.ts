@@ -5,5 +5,9 @@ import { fetcher } from "@/utils/fetcher";
 export const categoryService = {
     getAllCategory: async(isCache ?: boolean) : Promise<ApiResponse<Category[]>> => {
         return fetcher("/category", isCache)
+    },
+
+    getCategoryById: async(categoryId: string, isCache?: boolean) : Promise<ApiResponse<Category>> => {
+        return fetcher(`/category/${categoryId}`, isCache)
     }
 }
