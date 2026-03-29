@@ -20,9 +20,6 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
       href={`/products/${product.slug}`}
       prefetch={shouldPrefetch}
       className="no-underline hover:no-underline block h-full"
-      onClick={(e) => {
-        if (!product.inStock) e.preventDefault();
-      }}
       onMouseEnter={() => {
         if (!shouldPrefetch) setShouldPrefetch(true);
       }}
@@ -33,7 +30,7 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Hình ảnh sản phẩm */}
-        <div className="relative h-58 overflow-hidden bg-amber-100">
+        <div className="relative h-40 md:h-65 overflow-hidden bg-amber-100">
           <Image
             src={product.primaryImage ?? `/assets/images/mask-img.png`}
             alt={product.name}

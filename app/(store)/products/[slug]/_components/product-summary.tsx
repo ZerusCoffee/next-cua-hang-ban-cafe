@@ -19,6 +19,7 @@ type ProductSummaryType = {
   basePrice: number;
   optionState: OptionState;
   optionGroups: OptionGroup[];
+  inStock: boolean;
 };
 
 export default function ProductSummary({
@@ -26,6 +27,7 @@ export default function ProductSummary({
   optionState,
   optionGroups,
   productId,
+  inStock
 }: ProductSummaryType) {
   const [quantity, setQuantity] = useState(1);
 
@@ -224,9 +226,15 @@ export default function ProductSummary({
           <Button
             onClick={handleAddtoCart}
             className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2 shadow-md hover:shadow-lg"
+            disabled={!inStock}
           >
-            <ShoppingBag className="h-4 w-4" />
-            Thêm vào giỏ hàng
+            {inStock ? (
+              <>
+                <ShoppingBag className="h-4 w-4" />
+                <span> Thêm vào giỏ hàng </span>
+              </>
+            ) : "Hết sản phẩm"}
+
           </Button>
 
           {/* <Button variant="outline" className="w-full border-amber-300 hover:border-amber-500 hover:bg-amber-50 gap-2">
