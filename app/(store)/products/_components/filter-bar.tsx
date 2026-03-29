@@ -110,7 +110,7 @@ export default function FilterBar() {
                 <div className='px-4 py-3  border-b-2 border-amber-300'>
                     {
                         categories.length > 0 && (
-                            <ScrollArea className="w-full">
+                            <ScrollArea type='always' className="w-full py-2">
                                 <div className="flex justify-center items-center gap-3 py-2">
                                     <CategoryButton
                                         label='Tất cả'
@@ -126,7 +126,7 @@ export default function FilterBar() {
                                         />
                                     ))}
                                 </div>
-                                <ScrollBar orientation="horizontal" />
+                                <ScrollBar orientation="horizontal" className="opacity-100" />
                             </ScrollArea>
                         )
                     }

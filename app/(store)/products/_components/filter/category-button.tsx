@@ -16,7 +16,7 @@ export default function CategoryButton({ label, handleClick, isSelect }: Categor
             className={cn(
                 // Kích thước đồng đều
                 "h-12 w-32 md:w-40",
-                "flex-shrink-0",
+                "shrink-0",
                 "relative overflow-hidden",
                 "transition-all duration-300",
                 "hover:scale-105",
@@ -63,7 +63,7 @@ export default function CategoryButton({ label, handleClick, isSelect }: Categor
             {/* Hiệu ứng shimmer khi hover */}
             <div className={cn(
                 "absolute inset-0 -translate-x-full",
-                "bg-gradient-to-r from-transparent via-white/30 to-transparent",
+                "bg-linear-to-r from-transparent via-white/30 to-transparent",
                 "transition-transform duration-700",
                 "group-hover:translate-x-full"
             )} />

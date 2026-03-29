@@ -6,14 +6,20 @@ import ProductSliderSkeleton from "@/components/product/product-silder-skeleton"
 import Feature from "./_components/feature";
 import Newest from "./_components/newest";
 import Gallery from "./_components/gallery";
+import { categoryService } from "@/services/category-service";
 
 
-export default function HomePage() {
+export default async function HomePage() {
+
+  const { data: categories } = await categoryService.getAllCategory();
+
   return (
     <div className="overflow-hidden">
       <BannerCarousel />
       <MarqueeText />
-      <About />
+      <About
+        categories={categories || []}
+      />
       <Suspense fallback={<ProductSliderSkeleton />}>
         <Feature />
       </Suspense>

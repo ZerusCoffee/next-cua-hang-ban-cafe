@@ -3,7 +3,7 @@ import ImagesCard from './_components/images-card';
 import DescriptionCard from './_components/description-card';
 import ActionSection from './_components/action-section';
 import ProductCarousel from '@/components/product/product-carousel';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { baseUrl } from '@/constants/const';
 import ProductSchema from '@/components/schema/product-schema';
@@ -58,7 +58,6 @@ export default async function ProductDetailPage({
 
   if (!product) notFound();
   console.log(product)
-  if (!product.inStock) redirect("/products");
 
   const relatedProducts = await productService.getRelatedProducts(slug);
 
