@@ -13,7 +13,3 @@ export async function CheckOut(
     .then((res) => res.data)
     .catch((error: AxiosError) => error.response?.data);
 }
-
-export async function cancelOrder(orderNumber: string): Promise<void> {
-  return api.delete(`/checkout/cancel/${orderNumber}`);
-}
