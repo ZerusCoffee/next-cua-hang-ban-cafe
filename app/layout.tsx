@@ -13,7 +13,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: {
     template: "%s | Tiệm Cafe Zerus",
-    default: "Cà phê, Trà, Trà Sữa 24/7 Giao Nhanh | Tiệm Cafe Zerus",
+      default: "Cà phê, Trà, Trà Sữa 24/7 Giao Nhanh | Tiệm Cafe Zerus",
   },
 
   description:

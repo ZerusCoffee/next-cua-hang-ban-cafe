@@ -1,7 +1,5 @@
 "use client";
 
-import { format } from "date-fns";
-import { vi } from "date-fns/locale";
 import {
   AlertCircle,
   Calendar,
@@ -18,12 +16,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { CancelOrderDialog } from "@/components/dialog/cancel-order-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { cancelOrder } from "@/services/order";
 import { ItemDetail, OrderDetail } from "@/types/order.type";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const statusConfig = {
   pending: {
@@ -87,18 +91,29 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
   const PaymentStatusIcon =
     paymentStatusConfig[order.payment_status]?.icon || Clock;
 
-  const formatCurrency = (amount: string | number) => {
-    const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(numAmount);
-  };
+  const router = useRouter();
 
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "HH:mm - dd/MM/yyyy", { locale: vi });
-  };
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
+  const handleCancelOrder = async () => {
+    setIsCancelling(true);
+    try {
+      const response = await cancelOrder(order.order_number);
+
+      if (response?.status === "success") {
+        toast.success("Hủy đơn hàng thành công");
+        router.refresh();
+      } else {
+        toast.error("Hủy đơn hàng thất bại");
+      }
+    } catch (error) {
+      toast.error("Hủy đơn hàng thất bại " + error);
+    } finally {
+      setIsCancelling(false);
+      setIsCancelDialogOpen(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50 py-10">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -352,6 +367,18 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
 
             {/* Action Buttons */}
             <div className="space-y-3">
+              {order.status === "pending" &&
+                order.payment_status === "pending" && (
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={() => setIsCancelDialogOpen(true)}
+                    disabled={isCancelling}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    {isCancelling ? "Đang hủy..." : "Hủy đơn hàng"}
+                  </Button>
+                )}
               <Button asChild className="w-full">
                 <Link href="/products">Tiếp tục mua sắm</Link>
               </Button>
@@ -362,6 +389,14 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
           </div>
         </div>
       </div>
+      <CancelOrderDialog
+        open={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
+        orderNumber={order.order_number}
+        paymentStatus={order.payment_status}
+        onConfirm={handleCancelOrder}
+        isCancelling={isCancelling}
+      />
     </div>
   );
 }

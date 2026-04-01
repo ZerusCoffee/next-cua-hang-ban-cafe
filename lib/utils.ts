@@ -25,3 +25,11 @@ export const formatDate = (dateString: string) => {
     minute: "2-digit",
   });
 };
+
+export const formatCurrency = (amount: string | number) => {
+  const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(numAmount);
+};
