@@ -17,8 +17,6 @@ import { useSearchParams } from "next/navigation";
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import CategoryButton from './filter/category-button';
 
-
-
 export default function FilterBar() {
     const searchParams = useSearchParams();
 
@@ -47,7 +45,10 @@ export default function FilterBar() {
     const [category, setCategory] = useState(categoryParam);
 
     const [sortBy, setSortBy] = useState(sortByParam);
-    const [showFilters, setShowFilters] = useState(false);
+
+    // 2 state riêng biệt
+    const [showCategories, setShowCategories] = useState(true); // State cho phần category
+    const [showFilters, setShowFilters] = useState(false);     // State cho phần filter options
 
     // Cập nhật priceRange khi có maxPrice từ API
     useEffect(() => {
@@ -106,51 +107,75 @@ export default function FilterBar() {
 
     return (
         <>
-            <div className="bg-white border-y shadow-sm sticky top-12 md:top-20  z-40">
-                <div className='px-4 py-3  border-b-2 border-amber-300'>
-                    {
-                        categories.length > 0 && (
-                            <ScrollArea type='always' className="w-full py-2">
-                                <div className="flex justify-center items-center gap-3 py-2">
-                                    <CategoryButton
-                                        label='Tất cả'
-                                        handleClick={() => findByCategory(`all`)}
-                                        isSelect={category === 'all'}
-                                    />
-                                    {categories.map((cat, index) => (
-                                        <CategoryButton
-                                            label={cat.name}
-                                            key={index + cat.id}
-                                            handleClick={() => findByCategory(`${cat.id}`)}
-                                            isSelect={category === cat.id.toString()}
-                                        />
-                                    ))}
-                                </div>
-                                <ScrollBar orientation="horizontal" className="opacity-100" />
-                            </ScrollArea>
-                        )
-                    }
+            <div className="bg-white border-y shadow-sm sticky top-12 md:top-20 z-40">
 
+                {/* Phần Category Buttons - Có thể đóng/mở độc lập */}
+                <div className='px-4 py-4 border-b-2 border-amber-300'>
+                    {/* Nút toggle cho category */}
+                    <div
+                        className="flex items-center justify-center cursor-pointer hover:bg-gray-50 px-2 py-1 space-x-2"
+                        onClick={() => setShowCategories(!showCategories)}
+                    >
+                        <span className="font-medium text-md">Danh mục sản phẩm</span>
+                        <svg
+                            className={`w-4 h-4 transition-transform duration-300 ${showCategories ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </div>
+
+                    {/* Category buttons với animation */}
+                    <div className={`
+                        transition-all duration-300 overflow-hidden
+                        ${showCategories ? 'max-h-115 opacity-100' : 'max-h-0 opacity-0'}
+                    `}>
+                        {
+                            categories.length > 0 && (
+                                <ScrollArea type='always' className="w-full py-2">
+                                    <div className="flex justify-center items-center gap-3 py-2">
+                                        <CategoryButton
+                                            label='Tất cả'
+                                            handleClick={() => findByCategory(`all`)}
+                                            isSelect={category === 'all'}
+                                        />
+                                        {categories.map((cat, index) => (
+                                            <CategoryButton
+                                                label={cat.name}
+                                                key={index + cat.id}
+                                                handleClick={() => findByCategory(`${cat.id}`)}
+                                                isSelect={category === cat.id.toString()}
+                                            />
+                                        ))}
+                                    </div>
+                                    <ScrollBar orientation="horizontal" className="opacity-100" />
+                                </ScrollArea>
+                            )
+                        }
+                    </div>
                 </div>
+
+                {/* Phần Filter Options */}
                 <div className="max-w-7xl mx-auto px-4 py-3">
-                    {/* Search Bar */}
-                    <div className="flex items-center justify-center gap-2">
+                    {/* Nút toggle cho filter options */}
+                    <div className="flex items-center justify-center gap-2 ">
                         <Button
                             variant="outline"
-                            className=" p-4"
+                            className="p-4 cursor-pointer"
                             onClick={() => setShowFilters(!showFilters)}
                         >
-                            <span className=''>Bộ lọc tìm kiếm</span>
+                            <span className=''>{showFilters ? 'Ẩn' : 'Hiện'} bộ lọc tìm kiếm</span>
                             <Filter className="h-16 w-16" />
                         </Button>
                     </div>
 
-                    {/* Filters */}
+                    {/* Filter options với animation */}
                     <div className={`
-                    transition-all duration-300 overflow-hidden
-                    ${showFilters ? 'max-h-125' : 'max-h-0'}
-                `}>
-
+                        transition-all duration-300 overflow-hidden
+                        ${showFilters ? 'md:max-h-70 sm:max-h-120 opacity-100 mt-4' : 'max-h-0 opacity-0'}
+                    `}>
                         <div className="flex items-center gap-2 my-6 mx-1">
                             <SearchInput
                                 searchValue={searchTerm}

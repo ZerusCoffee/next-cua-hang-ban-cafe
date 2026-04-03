@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate, hasImage } from "@/lib/utils";
 import { cancelOrder } from "@/services/order";
 import { ItemDetail, OrderDetail } from "@/types/order.type";
 import Image from "next/image";
@@ -179,13 +179,14 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                   <div key={item.id}>
                     <div className="flex gap-4">
                       <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
-                        {item.product_image ? (
+                        {hasImage(item.product_image) ? (
                           <Image
                             src={item.product_image}
                             alt={item.product_name}
                             width={80}
                             height={80}
                             className="w-full h-full object-cover"
+                            unoptimized
                           />
                         ) : (
                           <Package className="w-8 h-8 text-gray-400" />

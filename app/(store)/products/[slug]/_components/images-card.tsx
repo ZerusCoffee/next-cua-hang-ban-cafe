@@ -169,6 +169,7 @@ export default function ImagesCard({ images, productName }: { images: string[], 
                         className="object-cover transition-transform duration-300"
                         priority={currentIndex === 0}
                         sizes="(max-width: 768px) 100vw, 45vw"
+                        unoptimized
                     />
                 </div>
 
@@ -224,6 +225,7 @@ export default function ImagesCard({ images, productName }: { images: string[], 
                                 fill
                                 className="object-cover"
                                 sizes="10vw"
+                                unoptimized
                             />
                         </div>
                     ))}
