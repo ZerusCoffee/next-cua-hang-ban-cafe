@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useDebouncedCartUpdate } from "@/hooks/useDebouncedCartUpdate";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, hasImage } from "@/lib/utils";
 import { CartItem } from "@/validation/cart.schema";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -27,16 +27,20 @@ export const CartItemComponent = ({
     },
   );
 
-  const imageSrc = item.image || "/assets/images/logo.jpg";
+
+  const imageSrc = hasImage(item.image || "")
+    ? item.image
+    : "/assets/images/mask-img.png";
 
   return (
     <div className="flex gap-4 bg-white p-4 rounded-lg border">
-      <div className="w-24 h-24 relative shrink-0">
+      <div className="w-30 h-30 flex items-center relative shrink-0">
         <Image
           src={`${imageSrc}`}
           alt={item.product_name}
           fill
           className="object-cover rounded"
+          unoptimized
         />
       </div>
 

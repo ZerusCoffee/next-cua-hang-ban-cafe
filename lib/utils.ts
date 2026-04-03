@@ -33,3 +33,13 @@ export const formatCurrency = (amount: string | number) => {
     currency: "VND",
   }).format(numAmount);
 };
+
+
+export const hasImage = ( image: string ) => {
+  const hasImage =
+    image &&
+    image.includes("/storage/") &&
+    image.split("/storage/")[1];
+
+  return hasImage
+}
