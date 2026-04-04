@@ -23,7 +23,6 @@ export default function FilterBar() {
     const categoryParam = searchParams.get("categoryId") ?? "all";
     const sortByParam = searchParams.get("sortBy") ?? "default";
     const searchTermParam = searchParams.get("searchName") ?? "";
-
     const minPriceParam = Number(searchParams.get("minPrice") ?? 0);
     const maxPriceParam = Number(searchParams.get("maxPrice") ?? 100000);
 
@@ -36,7 +35,6 @@ export default function FilterBar() {
     const maxPrice = maxPriceData?.data ? roundToNearest5k(maxPriceData?.data) : 100000;
 
     const [searchTerm, setSearchTerm] = useState(searchTermParam);
-
     const [priceRange, setPriceRange] = useState<[number, number]>([
         minPriceParam,
         maxPriceParam
@@ -46,18 +44,18 @@ export default function FilterBar() {
 
     const [sortBy, setSortBy] = useState(sortByParam);
 
-    // 2 state riêng biệt
-    const [showCategories, setShowCategories] = useState(true); // State cho phần category
-    const [showFilters, setShowFilters] = useState(false);     // State cho phần filter options
+    const [showCategories, setShowCategories] = useState(true);
+    const [showFilters, setShowFilters] = useState(false);
 
     // Cập nhật priceRange khi có maxPrice từ API
     useEffect(() => {
         setSearchTerm(searchTermParam);
+        setCategory(categoryParam)
         if (maxPriceData?.data) {
             setPriceRange([0, maxPrice]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [maxPriceData?.data, searchTermParam]);
+    }, [maxPriceData?.data, searchParams]);
 
     const handleApplyFilters = () => {
         const filters = {
