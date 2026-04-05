@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 
 export default function ProductCard({ product }: { product: ProductCardType }) {
   const [isHovered, setIsHovered] = useState(false);
-  const [shouldPrefetch, setShouldPrefetch] = useState(false)
+  const [shouldPrefetch, setShouldPrefetch] = useState(false);
 
   if (!product) return;
 
@@ -36,8 +36,10 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             alt={product.name}
             width={350}
             height={350}
-            className={`w-full h-full object-cover transition-all duration-300 ${isHovered ? "scale-110" : "scale-100"
-              } ${outOfStock ? "opacity-50 grayscale" : ""}`}
+            className={`w-full h-full object-cover transition-all duration-300 ${
+              isHovered ? "scale-110" : "scale-100"
+            } ${outOfStock ? "opacity-50 grayscale" : ""}`}
+            unoptimized
           />
 
           {/* Badge hết hàng */}
@@ -59,10 +61,11 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${i < Math.floor(4)
-                      ? "text-amber-500 fill-amber-500"
-                      : "text-amber-300"
-                      }`}
+                    className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                      i < Math.floor(4)
+                        ? "text-amber-500 fill-amber-500"
+                        : "text-amber-300"
+                    }`}
                   />
                 ))}
               </div>
@@ -89,12 +92,13 @@ export default function ProductCard({ product }: { product: ProductCardType }) {
             </span>
             <Button
               disabled={outOfStock}
-              className={`px-1 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${outOfStock
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : isHovered
-                  ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
-                  : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
-                }`}
+              className={`px-1 md:px-4 md:py-1.5 text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer ${
+                outOfStock
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : isHovered
+                    ? "bg-amber-600 text-white hover:bg-amber-700 shadow-lg"
+                    : "bg-amber-500 text-white hover:bg-amber-600 shadow-md"
+              }`}
             >
               {outOfStock ? "Hết hàng" : "Xem ngay"}
             </Button>
