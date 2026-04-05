@@ -17,7 +17,7 @@ export function useOrderStatus(
   useEffect(() => {
     if (!user?.id) return;
 
-    Pusher.logToConsole = true;
+    Pusher.logToConsole = false;
 
     let pusher: Pusher;
 

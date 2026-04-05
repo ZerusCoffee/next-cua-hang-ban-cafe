@@ -2,15 +2,8 @@ import { categoryService } from "@/services/category-service";
 import { productService } from "@/services/product-service";
 
 import { baseUrl, productLimit } from "@/constants/const";
-import CategorySection from "./_components/category-section";
-import InfiniteProductList from "./_components/infinite-product-list";
-import ProductPageHeader from "./_components/product-page-header";
-import FilterBar from "./_components/filter-bar";
-
-import { Paginated } from "@/types/common/pagination.type";
-import { ProductCardType, ProductQueryParams } from "@/types/product.type";
+import { ProductQueryParams } from "@/types/product.type";
 import { Category } from "@/types/category.type";
-import { ApiResponse } from "@/types/common/response.type";
 import { SearchParamsProps } from "@/types/common/search.type";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
