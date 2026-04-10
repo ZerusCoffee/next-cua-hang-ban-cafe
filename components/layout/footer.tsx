@@ -2,17 +2,17 @@ import Image from "next/image";
 
 const footerLinks = {
   intro: [
-    { label: "Về Chúng Tôi", href: "#" },
-    { label: "Sản phẩm", href: "#" },
-    { label: "Khuyến mãi", href: "#" },
-    { label: "Chuyện cà phê", href: "#" },
-    { label: "Cửa Hàng", href: "#" },
-    { label: "Tuyển dụng", href: "#" },
+    { label: "Về Chúng Tôi", href: "/blogs" },
+    { label: "Sản phẩm", href: "/products" },
+    { label: "Khuyến mãi", href: "/promotions" },
+    { label: "Chuyện cà phê", href: "/blogs/news" },
+    { label: "Cửa Hàng", href: "/blogs/coffeeholic" },
+    { label: "Tuyển dụng", href: "/blogs/blog" },
   ],
   terms: [
-    { label: "Điều khoản sử dụng", href: "#" },
-    { label: "Chính sách bảo mật thông tin", href: "#" },
-    { label: "Hướng dẫn xuất hóa đơn GTGT", href: "#" },
+    { label: "Điều khoản sử dụng", href: "/blogs" },
+    { label: "Chính sách bảo mật thông tin", href: "/blogs" },
+    { label: "Hướng dẫn xuất hóa đơn GTGT", href: "/blogs" },
   ],
 };
 
@@ -104,8 +104,15 @@ const Footer = () => {
 
               {/* QR Code Placeholder với hiệu ứng mềm mại */}
               <div className="w-28 h-28 bg-linear-to-br from-gray-800 to-gray-900 p-2 rounded-xl shadow-inner border border-gray-700">
-                <div className="w-full h-full bg-gray-700 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-400 text-xs">QR Code</span>
+                <div className="relative w-full h-full bg-gray-700 rounded-lg flex items-center justify-center">
+                  <Image
+                    src="/assets/images/qr-code-mobile-app.jpg"
+                    alt="QR Code"
+                    fill
+                    className="object-contain"
+                    sizes="112px"
+                    unoptimized
+                  />
                 </div>
               </div>
             </div>
@@ -116,16 +123,31 @@ const Footer = () => {
                 Follow Us
               </p>
               <div className="flex gap-3">
-                {["facebook", "youtube", "instagram"].map((platform) => (
+                {[
+                  {
+                    platform: "facebook",
+                    href: "https://www.facebook.com/MixiGaming", // ← thay link thật vào đây
+                  },
+                  {
+                    platform: "youtube",
+                    href: "https://www.youtube.com/@MixiGaming3con",
+                  },
+                  {
+                    platform: "instagram",
+                    href: "https://www.instagram.com/dochet1989",
+                  },
+                ].map((item) => (
                   <a
-                    href="#"
-                    key={platform}
+                    href={item.href}
+                    key={item.platform}
+                    target="_blank" // mở tab mới
+                    rel="noopener noreferrer" // an toàn hơn
                     className="w-10 h-10 rounded-full bg-gray-800 hover:bg-amber-300/20 flex items-center justify-center transition-all duration-300 hover:scale-110 border border-gray-700 hover:border-amber-300/30"
                   >
                     <div className="relative w-5 h-5">
                       <Image
-                        src={`/assets/images/${platform}.png`}
-                        alt={`${platform} icon`}
+                        src={`/assets/images/${item.platform}.png`}
+                        alt={`${item.platform} icon`}
                         fill
                         className="object-contain"
                         sizes="20px"
