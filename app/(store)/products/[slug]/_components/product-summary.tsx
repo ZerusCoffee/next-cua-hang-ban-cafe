@@ -11,6 +11,7 @@ import { useUser } from "@/services/user";
 import { OptionGroup } from "@/types/option.type";
 import { CartItemOption } from "@/validation/cart.schema";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -27,7 +28,7 @@ export default function ProductSummary({
   optionState,
   optionGroups,
   productId,
-  inStock
+  inStock,
 }: ProductSummaryType) {
   const [quantity, setQuantity] = useState(1);
 
@@ -37,6 +38,8 @@ export default function ProductSummary({
     setQuantity((prev) => prev - 1);
   };
 
+  const router = useRouter();
+
   const { mutate } = useCart();
 
   const handleAddtoCart = async (e: React.MouseEvent) => {
@@ -44,7 +47,26 @@ export default function ProductSummary({
     e.stopPropagation();
 
     if (!user) {
-      toast.warning("Vui lòng đăng nhập để thêm giỏ hàng")
+      toast.warning("Vui lòng đăng nhập để thêm giỏ hàng", {
+        description: (
+          <button
+            onClick={() => {
+              router.push("/login");
+              toast.dismiss();
+            }}
+            style={{
+              color: "#f59e0b",
+              fontWeight: 500,
+              cursor: "pointer",
+              background: "none",
+              border: "none",
+              padding: 0,
+            }}
+          >
+            Đăng nhập ngay →
+          </button>
+        ),
+      });
       return;
     }
 
@@ -233,8 +255,9 @@ export default function ProductSummary({
                 <ShoppingBag className="h-4 w-4" />
                 <span> Thêm vào giỏ hàng </span>
               </>
-            ) : "Hết sản phẩm"}
-
+            ) : (
+              "Hết sản phẩm"
+            )}
           </Button>
 
           {/* <Button variant="outline" className="w-full border-amber-300 hover:border-amber-500 hover:bg-amber-50 gap-2">
