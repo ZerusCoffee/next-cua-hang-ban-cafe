@@ -36,6 +36,7 @@ export default function CheckoutPage() {
   const [processing, setProcessing] = useState(false);
   const [isAddAddressOpen, setIsAddAddressOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [isPaidViaPayPal, setIsPaidViaPayPal] = useState(false);
 
   const form = useForm<CheckoutRequest>({
     resolver: zodResolver(CheckoutRequestSchema),
@@ -69,15 +70,22 @@ export default function CheckoutPage() {
     console.log(form.getValues());
   }, [defaultAddress, form, selectedAddress]);
 
+  const paymentMethod = form.watch("payment_method");
+  const isPayPalReview = step === "review" && paymentMethod === "paypal";
+
   const onHandleSubmit = async (data: CheckoutRequest) => {
     setProcessing(true);
     try {
       const res = await CheckOut(data);
       mutate(null, false);
-      if (res.data.payment_method === "cod") {
+      if (res.data.payment_method === "cod" || isPaidViaPayPal) {
         router.push(`/account/orders/${res.data.order_number}`);
       } else {
-        router.push(res.data.payment_url ?? "/");
+        // Nếu là PayPal JS SDK, có thể backend đã xử lý xong hoặc cần redirect
+        // Nếu đã thanh toán qua popup, thường sẽ redirect về trang cảm ơn
+        router.push(
+          res.data.payment_url ?? `/account/orders/${res.data.order_number}`,
+        );
       }
       toast.success("Đặt hàng thành công!");
     } catch (e) {
@@ -114,7 +122,19 @@ export default function CheckoutPage() {
                   )}
                   {step === "payment" && <PaymentStep />}
                   {step === "review" && (
-                    <ReviewStep selectedAddress={selectedAddress} cart={cart} />
+                    <ReviewStep
+                      selectedAddress={selectedAddress}
+                      cart={cart}
+                      onPayPalSuccess={(details) => {
+                        const orderNumber = details?.order_number;
+                        if (orderNumber) {
+                          router.push(`/account/orders/${orderNumber}`);
+                        } else {
+                          // fallback
+                          router.push("/account/orders");
+                        }
+                      }}
+                    />
                   )}
                 </Card>
 
@@ -131,33 +151,34 @@ export default function CheckoutPage() {
                     <ChevronLeft className="mr-2 h-4 w-4" /> Quay lại
                   </Button>
 
-                  <Button
-                    type="button"
-                    size="lg"
-                    className={
-                      step === "review"
-                        ? "bg-green-600 hover:bg-green-700 cursor-pointer"
-                        : "bg-primary"
-                    }
-                    disabled={processing || !selectedAddress}
-                    onClick={
-                      step === "review"
-                        ? form.handleSubmit(onHandleSubmit)
-                        : () =>
-                            setStep(step === "address" ? "payment" : "review")
-                    }
-                  >
-                    {processing ? (
-                      <Loader2 className="animate-spin mr-2" />
-                    ) : null}
-                    {step === "review" ? "Xác nhận đặt hàng" : "Tiếp tục"}
-                    {step !== "review" && (
-                      <ChevronRight className="ml-2 h-4 w-4" />
-                    )}
-                  </Button>
+                  {!isPayPalReview && (
+                    <Button
+                      type="button"
+                      size="lg"
+                      className={
+                        step === "review"
+                          ? "bg-green-600 hover:bg-green-700 cursor-pointer"
+                          : "bg-primary"
+                      }
+                      disabled={processing || !selectedAddress}
+                      onClick={
+                        step === "review"
+                          ? form.handleSubmit(onHandleSubmit)
+                          : () =>
+                              setStep(step === "address" ? "payment" : "review")
+                      }
+                    >
+                      {processing ? (
+                        <Loader2 className="animate-spin mr-2" />
+                      ) : null}
+                      {step === "review" ? "Xác nhận đặt hàng" : "Tiếp tục"}
+                      {step !== "review" && (
+                        <ChevronRight className="ml-2 h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
                 </div>
               </div>
-
               {/* Tóm tắt đơn hàng bên phải */}
               <div className="lg:col-span-1">
                 <OrderSummary cart={cart} selectedAddress={selectedAddress} />

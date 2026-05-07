@@ -1,17 +1,23 @@
+"use client";
 import CheckoutGuard from "@/guards/checkout-guard";
-import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+
 export default function CheckOutLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <PayPalProvider
-      clientId="YOUR_CLIENT_ID"
-      components={["paypal-payments"]}
-      pageType="checkout"
+    <PayPalScriptProvider
+      options={{
+        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
+        currency: "USD",
+        intent: "capture",
+        components: "buttons,messages",
+        "enable-funding": "paylater",
+      }}
     >
-      <CheckoutGuard>{children}</CheckoutGuard>;
-    </PayPalProvider>
+      <CheckoutGuard>{children}</CheckoutGuard>
+    </PayPalScriptProvider>
   );
 }

@@ -1,48 +1,60 @@
-import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
+"use client";
 
-export function PayPalPaymentButtons() {
-  return (
-    <PayPalScriptProvider
-      options={{
-        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!,
-        currency: "USD",
-        intent: "capture",
-        components: "buttons",
-        enableFunding: "card", // bật Credit/Debit Cards
-        disableFunding: "paylater,venmo",
-      }}
-    >
-      <div className="mt-3 space-y-2">
-        {/* Nút PayPal account + Credit Card */}
-        <PayPalButtons
-          style={{
-            layout: "vertical",
-            shape: "rect",
-            label: "paypal",
-            height: 40,
-          }}
-          fundingSource={undefined} // undefined = hiện tất cả (PayPal + Card)
-          createOrder={async () => {
-            console.log("Da hoan thanh don hang");
-            return "Da hoan thanh don hang";
-          }}
-          onApprove={async (data) => {
-            const res = await fetch("/api/paypal/capture", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ orderId: data.orderID }),
-            });
-            const result = await res.json();
-            if (result.success) {
-              // redirect hoặc show success
-              alert("Thanh toán thành công!");
-            }
-          }}
-          onError={(err) => {
-            console.error("PayPal error:", err);
-          }}
-        />
+import { usePayPalCheckout } from "@/hooks/usePaypalCheckout";
+import type { PayPalCaptureDetails } from "@/types/paypal.type";
+import type { CheckoutRequest } from "@/validation/checkout.schema";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { useFormContext } from "react-hook-form";
+import { toast } from "sonner";
+
+interface PayPalPaymentButtonsProps {
+  onSuccess?: (details: PayPalCaptureDetails) => void;
+  onError?: (error: unknown) => void;
+}
+
+export function PayPalPaymentButtons({
+  onSuccess,
+  onError,
+}: PayPalPaymentButtonsProps) {
+  const [{ isPending, isResolved, isRejected }] = usePayPalScriptReducer();
+  const { getValues } = useFormContext();
+
+  const checkoutData = getValues() as CheckoutRequest;
+
+  const { createOrder, onApprove } = usePayPalCheckout(checkoutData, onSuccess);
+
+  if (isPending) {
+    return <div className="animate-pulse bg-gray-200 h-10 rounded-md" />;
+  }
+
+  if (isRejected) {
+    return (
+      <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+        Không thể tải cổng thanh toán PayPal. Vui lòng kiểm tra cấu hình hoặc
+        thử lại sau.
       </div>
-    </PayPalScriptProvider>
+    );
+  }
+
+  if (!isResolved) {
+    return null;
+  }
+
+  return (
+    <div className="mt-3 space-y-4">
+      <PayPalButtons
+        style={{ layout: "vertical", shape: "rect", label: "paypal" }}
+        createOrder={createOrder}
+        onApprove={onApprove}
+        onCancel={() => {
+          toast.info("Giao dịch đã bị hủy.");
+        }}
+        onError={(err) => {
+          console.error("PayPal buttons error:", err);
+          toast.error("Có lỗi xảy ra trong quá trình thanh toán PayPal.");
+          onError?.(err);
+        }}
+      />
+    </div>
   );
 }
