@@ -7,13 +7,14 @@ import BusinessSchema from "@/components/schema/business-schema";
 import { Toaster } from "@/components/ui/sonner";
 import { baseUrl } from "@/constants/const";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
     template: "%s | Tiệm Cafe Zerus",
-      default: "Cà phê, Trà, Trà Sữa 24/7 Giao Nhanh | Tiệm Cafe Zerus",
+    default: "Cà phê, Trà, Trà Sữa 24/7 Giao Nhanh | Tiệm Cafe Zerus",
   },
 
   description:
@@ -66,6 +67,7 @@ export default function RootLayout({
             <LayoutWrapper>
               {children}
               <Analytics />
+              <SpeedInsights />
             </LayoutWrapper>
             <Footer />
           </div>
