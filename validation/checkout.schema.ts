@@ -15,7 +15,7 @@ export const ShippingAddressSchema = z.object({
 // Schema cho checkout request
 export const CheckoutRequestSchema = z.object({
   ...ShippingAddressSchema.shape,
-  payment_method: z.enum(["cod", "vnpay", "momo", "paypal"], {
+  payment_method: z.enum(["cod", "vnpay", "momo", "paypal", "applepay"], {
     message: "Phương thức thanh toán không đúng",
   }),
   coupon_code: z.string().optional(),

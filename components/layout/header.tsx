@@ -20,43 +20,10 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { If } from "react-haiku";
 import { CartButton } from "../button/button-cart";
+import { SearchIcon } from "../header/IconSearch";
+import SearchOverlay from "../header/SearchOverlay";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Skeleton } from "../ui/skeleton";
-
-// SVG Icons
-const SearchIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-    />
-  </svg>
-);
-
-const CloseIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M6 18L18 6M6 6l12 12"
-    />
-  </svg>
-);
 
 const navigation = [
   { name: "Trang chủ", href: "/" },
@@ -205,37 +172,12 @@ export function Header() {
 
             {/* Thanh tìm kiếm - hiển thị khi searchMode = true */}
             {searchMode && (
-              <div className="absolute inset-0 flex items-center justify-center px-4 sm:px-6 lg:px-12">
-                <form onSubmit={handleSearch} className="w-full max-w-2xl">
-                  <div className="relative flex items-center">
-                    <div className="relative flex-1">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <SearchIcon className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Tìm kiếm sản phẩm, bài viết..."
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-900"
-                        autoFocus
-                      />
-                    </div>
-
-                    {/* Nút đóng chế độ tìm kiếm */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchMode(false);
-                        setSearchQuery("");
-                      }}
-                      className="ml-2 p-3 rounded-xl border bg-white border-gray-300 text-gray-700 hover:bg-gray-100 animate-search"
-                    >
-                      <CloseIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                </form>
-              </div>
+              <SearchOverlay
+                onClose={() => {
+                  setSearchMode(false);
+                  setSearchQuery("");
+                }}
+              />
             )}
 
             {/* User actions - ẩn khi ở chế độ tìm kiếm */}
