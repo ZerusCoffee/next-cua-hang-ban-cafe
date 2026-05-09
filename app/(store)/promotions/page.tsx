@@ -143,7 +143,7 @@ export default function PromotionsPage() {
           className="bg-[#D94E28] hover:bg-[#BF4423] text-white px-12 h-16 rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-2xl shadow-[#D94E28]/20 relative z-10"
           asChild
         >
-          <Link href="/login">Đăng nhập ngay</Link>
+          <Link href="/products">Khám phá ngay</Link>
         </Button>
       </div>
     </PromotionsLayout>
