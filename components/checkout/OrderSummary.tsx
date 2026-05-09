@@ -3,7 +3,8 @@ import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/utils";
 import { Address } from "@/types/address.type";
 import { Cart, CartItem } from "@/validation/cart.schema";
-import { Package } from "lucide-react";
+import { Package, Ticket } from "lucide-react";
+import { useFormContext } from "react-hook-form";
 
 export function OrderSummary({
   cart,
@@ -12,6 +13,9 @@ export function OrderSummary({
   cart: Cart;
   selectedAddress: Address | null;
 }) {
+  const { watch } = useFormContext();
+  const couponCode = watch("coupon_code");
+
   return (
     <Card className="border-none shadow-lg sticky top-4">
       <CardHeader>
@@ -45,6 +49,17 @@ export function OrderSummary({
             <span>Vận chuyển:</span>
             <span>Miễn phí</span>
           </div>
+
+          {couponCode && (
+            <div className="flex justify-between text-orange-600 font-medium">
+              <div className="flex items-center gap-1">
+                <Ticket className="h-3 w-3" />
+                <span>Mã giảm giá:</span>
+              </div>
+              <span>{couponCode}</span>
+            </div>
+          )}
+
           <Separator />
           <div className="flex justify-between font-bold text-base pt-2">
             <span>Tổng cộng:</span>
@@ -52,6 +67,11 @@ export function OrderSummary({
               {formatPrice(cart?.subtotal || 0)}
             </span>
           </div>
+          {couponCode && (
+            <p className="text-[10px] text-gray-400 italic text-right">
+              * Giảm giá sẽ được áp dụng khi đặt hàng thành công
+            </p>
+          )}
         </div>
 
         {selectedAddress && (

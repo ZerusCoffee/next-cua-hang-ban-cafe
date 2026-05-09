@@ -9,7 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import { Address } from "@/types/address.type";
 import { PayPalCaptureDetails } from "@/types/paypal.type";
 import { Cart, CartItem } from "@/validation/cart.schema";
-import { Check, CreditCard, MapPin, Package } from "lucide-react";
+import { Check, CreditCard, MapPin, Package, Ticket } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 interface Props {
@@ -21,6 +21,7 @@ interface Props {
 export function ReviewStep({ selectedAddress, cart, onPayPalSuccess }: Props) {
   const { watch } = useFormContext();
   const paymentMethod = watch("payment_method");
+  const couponCode = watch("coupon_code");
   const notes = watch("customer_notes");
 
   const totalAmount =
@@ -60,16 +61,27 @@ export function ReviewStep({ selectedAddress, cart, onPayPalSuccess }: Props) {
           </p>
         </div>
 
-        {/* Thanh toán */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-semibold mb-2 flex items-center gap-2">
-            <CreditCard className="h-4 w-4" /> Thanh toán
-          </h3>
-          <p className="text-sm uppercase font-medium text-primary">
-            {paymentMethod === "paypal"
-              ? "PayPal / Credit Card"
-              : paymentMethod}
-          </p>
+        {/* Thanh toán & Ưu đãi */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2 flex items-center gap-2">
+              <CreditCard className="h-4 w-4" /> Thanh toán
+            </h3>
+            <p className="text-sm uppercase font-medium text-primary">
+              {paymentMethod === "paypal"
+                ? "PayPal / Credit Card"
+                : paymentMethod}
+            </p>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2 flex items-center gap-2">
+              <Ticket className="h-4 w-4" /> Ưu đãi
+            </h3>
+            <p className="text-sm font-medium text-orange-600">
+              {couponCode || "Không áp dụng"}
+            </p>
+          </div>
         </div>
 
         {/* Sản phẩm */}
@@ -91,6 +103,11 @@ export function ReviewStep({ selectedAddress, cart, onPayPalSuccess }: Props) {
             <span>Tổng cộng:</span>
             <span>{formatPrice(totalAmount)}</span>
           </div>
+          {couponCode && (
+            <p className="text-[10px] text-gray-400 italic text-right mt-1">
+              * Giảm giá sẽ được áp dụng khi đặt hàng thành công
+            </p>
+          )}
         </div>
 
         {notes && (

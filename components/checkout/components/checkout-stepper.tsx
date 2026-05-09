@@ -1,18 +1,19 @@
-import { Check, CreditCard, MapPin } from "lucide-react";
+import { Check, CreditCard, MapPin, Ticket } from "lucide-react";
 
 interface StepperProps {
-  currentStep: "address" | "payment" | "review";
+  currentStep: "address" | "coupon" | "payment" | "review";
 }
 
 const steps = [
   { id: "address", label: "Địa chỉ", icon: MapPin },
+  { id: "coupon", label: "Ưu đãi", icon: Ticket },
   { id: "payment", label: "Thanh toán", icon: CreditCard },
   { id: "review", label: "Xác nhận", icon: Check },
 ];
 
 export function CheckoutStepper({ currentStep }: StepperProps) {
   const getStepStatus = (stepId: string, index: number) => {
-    const stepOrder = ["address", "payment", "review"];
+    const stepOrder = ["address", "coupon", "payment", "review"];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (stepId === currentStep) return "active";
     if (index < currentIndex) return "completed";

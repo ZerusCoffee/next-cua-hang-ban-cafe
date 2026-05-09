@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useOrder } from "@/hooks/use-order";
-import { formatDate, formatPrice } from "@/lib/utils";
+import { cn, formatDate, formatPrice } from "@/lib/utils";
 import { Order } from "@/types/order.type";
 import {
   ArrowDownUp,
@@ -119,7 +119,10 @@ function StatusBadge({ status }: { status: Order["status"] }) {
   return (
     <Badge
       variant="outline"
-      className={`inline-flex items-center gap-1.5 font-medium ${STATUS_STYLES[status]}`}
+      className={cn(
+        "inline-flex items-center gap-1.5 font-bold h-6 border-0",
+        STATUS_STYLES[status],
+      )}
     >
       {getStatusIcon(status)}
       {STATUS_LABELS[status]}
@@ -131,11 +134,12 @@ function PaymentBadge({ status }: { status: Order["payment_status"] }) {
   return (
     <Badge
       variant="outline"
-      className={
+      className={cn(
+        "font-bold h-6 border-0",
         status === "paid"
-          ? "bg-emerald-50 text-emerald-700 border-emerald-200 font-medium"
-          : "bg-amber-50 text-amber-700 border-amber-200 font-medium"
-      }
+          ? "bg-emerald-50 text-emerald-700"
+          : "bg-amber-50 text-amber-700",
+      )}
     >
       {status === "paid" ? "Đã thanh toán" : "Chưa thanh toán"}
     </Badge>
@@ -145,13 +149,13 @@ function PaymentBadge({ status }: { status: Order["payment_status"] }) {
 function EmptyState({ hasFilters }: { hasFilters: boolean }) {
   return (
     <TableRow>
-      <TableCell colSpan={6} className="py-16 text-center">
+      <TableCell colSpan={6} className="py-20 text-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
             <Package className="h-8 w-8 text-gray-400" />
           </div>
           <div>
-            <p className="font-semibold text-gray-700">
+            <p className="font-bold text-gray-900 text-lg">
               {hasFilters ? "Không tìm thấy đơn hàng" : "Chưa có đơn hàng nào"}
             </p>
             <p className="text-sm text-gray-500 mt-1">
@@ -161,7 +165,7 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
             </p>
           </div>
           {!hasFilters && (
-            <Button asChild size="sm" className="mt-2">
+            <Button asChild size="sm" className="mt-4">
               <Link href="/products">
                 <ShoppingBag className="h-4 w-4 mr-2" />
                 Mua sắm ngay
@@ -174,8 +178,6 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
   );
 }
 
-// ─── Main Page ─────────────────────────────────────────────────────────────────
-
 export default function OrdersPage() {
   const { orders, error, isLoading } = useOrder();
 
@@ -185,8 +187,6 @@ export default function OrdersPage() {
   const [sortOption, setSortOption] = useState<SortOption>("newest");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // ── Filter + Sort ──────────────────────────────────────────────────────────
-
   const orderList: Order[] = useMemo(() => orders?.data?.data ?? [], [orders]);
 
   const filteredOrders = useMemo(() => {
@@ -194,7 +194,6 @@ export default function OrdersPage() {
 
     let result = [...orderList];
 
-    // Search by order number
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       result = result.filter((o) =>
@@ -202,19 +201,16 @@ export default function OrdersPage() {
       );
     }
 
-    // Status filter
     if (statusFilter !== "all") {
       result = result.filter((o) => o.status === statusFilter);
     }
 
-    // Time period filter
     if (timePeriod) {
       const cutoff = new Date();
       cutoff.setDate(cutoff.getDate() - timePeriod);
       result = result.filter((o) => new Date(o.created_at) >= cutoff);
     }
 
-    // Sort
     result.sort((a, b) => {
       switch (sortOption) {
         case "newest":
@@ -237,8 +233,6 @@ export default function OrdersPage() {
     return result;
   }, [searchTerm, statusFilter, timePeriod, sortOption, orderList]);
 
-  // ── Pagination ─────────────────────────────────────────────────────────────
-
   const totalPages = Math.max(
     1,
     Math.ceil(filteredOrders.length / ORDERS_PER_PAGE),
@@ -255,7 +249,6 @@ export default function OrdersPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // When filters change, reset to page 1
   const applyStatusFilter = (value: StatusFilter) => {
     setStatusFilter(value);
     setCurrentPage(1);
@@ -277,197 +270,186 @@ export default function OrdersPage() {
   const hasActiveFilters =
     searchTerm.trim() !== "" || statusFilter !== "all" || timePeriod !== null;
 
-  // ── Error State ────────────────────────────────────────────────────────────
-
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md shadow-sm">
-          <CardContent className="pt-8 pb-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
-              <XCircle className="h-7 w-7 text-red-500" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-1">
-              Có lỗi xảy ra
-            </h3>
-            <p className="text-sm text-gray-500 mb-6">
-              Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.
-            </p>
-            <Button onClick={() => window.location.reload()}>Thử lại</Button>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="w-full shadow-sm">
+        <CardContent className="pt-8 pb-6 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
+            <XCircle className="h-7 w-7 text-red-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-1">
+            Có lỗi xảy ra
+          </h3>
+          <p className="text-sm text-gray-500 mb-6">
+            Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.
+          </p>
+          <Button onClick={() => window.location.reload()}>Thử lại</Button>
+        </CardContent>
+      </Card>
     );
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────────
-
   return (
-    <div className="min-h-screen bg-gray-50/60">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* ── Header ── */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">
-              Tài khoản
-            </p>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Đơn hàng của tôi
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Theo dõi và quản lý tất cả đơn hàng của bạn
-            </p>
-          </div>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/products">
-              <ShoppingBag className="h-4 w-4 mr-2" />
-              Tiếp tục mua sắm
-            </Link>
-          </Button>
+    <div className="space-y-6 pt-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Đơn hàng của tôi</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Theo dõi và quản lý tất cả đơn hàng của bạn
+          </p>
         </div>
+        <Button asChild variant="outline" size="sm">
+          <Link href="/products">
+            <ShoppingBag className="h-4 w-4 mr-2" />
+            Tiếp tục mua sắm
+          </Link>
+        </Button>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* ── Sidebar ── */}
-          <aside className="lg:col-span-1">
-            <Card className="sticky top-24 shadow-sm border-gray-200/80">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-gray-400" />
-                  Bộ lọc
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                {/* Status filter */}
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">
-                    Trạng thái
-                  </p>
-                  <div className="space-y-1">
-                    {STATUS_OPTIONS.map(({ label, value }) => (
-                      <button
-                        key={value}
-                        onClick={() => applyStatusFilter(value as StatusFilter)}
-                        className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                          statusFilter === value
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-gray-600 hover:bg-gray-100"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-100" />
-
-                {/* Time period filter */}
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">
-                    Khoảng thời gian
-                  </p>
-                  <div className="space-y-1">
-                    {TIME_PERIODS.map(({ label, days }) => (
-                      <button
-                        key={days}
-                        onClick={() => applyTimePeriod(days)}
-                        className={`w-full text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                          timePeriod === days
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "text-gray-600 hover:bg-gray-100"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {hasActiveFilters && (
-                  <>
-                    <div className="border-t border-gray-100" />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-gray-500 hover:text-gray-700"
-                      onClick={clearFilters}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <aside className="xl:col-span-1">
+          <Card className="shadow-sm border-gray-200/80">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-400" />
+                Bộ lọc
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2.5">
+                  Trạng thái
+                </p>
+                <div className="space-y-1">
+                  {STATUS_OPTIONS.map(({ label, value }) => (
+                    <button
+                      key={value}
+                      onClick={() => applyStatusFilter(value as StatusFilter)}
+                      className={cn(
+                        "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors font-medium",
+                        statusFilter === value
+                          ? "bg-primary/10 text-primary font-bold"
+                          : "text-gray-600 hover:bg-gray-100",
+                      )}
                     >
-                      <X className="h-3.5 w-3.5 mr-1.5" />
-                      Xóa bộ lọc
-                    </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </aside>
-
-          {/* ── Main Content ── */}
-          <main className="lg:col-span-3 space-y-4">
-            {/* Search + Sort bar */}
-            <div className="flex gap-3">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
-                <Input
-                  placeholder="Tìm theo mã đơn hàng..."
-                  className="pl-9 bg-white border-gray-200 shadow-sm"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => {
-                      setSearchTerm("");
-                      setCurrentPage(1);
-                    }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+              <div className="border-t border-gray-100" />
+
+              <div>
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2.5">
+                  Khoảng thời gian
+                </p>
+                <div className="space-y-1">
+                  {TIME_PERIODS.map(({ label, days }) => (
+                    <button
+                      key={days}
+                      onClick={() => applyTimePeriod(days)}
+                      className={cn(
+                        "w-full text-left text-sm px-3 py-2 rounded-lg transition-colors font-medium",
+                        timePeriod === days
+                          ? "bg-primary/10 text-primary font-bold"
+                          : "text-gray-600 hover:bg-gray-100",
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {hasActiveFilters && (
+                <>
+                  <div className="border-t border-gray-100" />
                   <Button
-                    variant="outline"
-                    className="shrink-0 bg-white border-gray-200 shadow-sm gap-2"
+                    variant="ghost"
+                    size="sm"
+                    className="w-full text-gray-500 hover:text-gray-700 font-medium"
+                    onClick={clearFilters}
                   >
-                    <ArrowDownUp className="h-4 w-4" />
-                    <span className="hidden sm:inline">
-                      {SORT_LABELS[sortOption]}
-                    </span>
+                    <X className="h-3.5 w-3.5 mr-1.5" />
+                    Xóa bộ lọc
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44">
-                  {(Object.entries(SORT_LABELS) as [SortOption, string][]).map(
-                    ([value, label]) => (
-                      <DropdownMenuItem
-                        key={value}
-                        onClick={() => {
-                          setSortOption(value);
-                          setCurrentPage(1);
-                        }}
-                        className={
-                          sortOption === value ? "font-medium text-primary" : ""
-                        }
-                      >
-                        {label}
-                      </DropdownMenuItem>
-                    ),
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </aside>
+
+        <main className="xl:col-span-3 space-y-4">
+          <div className="flex gap-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
+              <Input
+                placeholder="Tìm theo mã đơn hàng..."
+                className="pl-9 bg-white border-gray-200 shadow-sm focus-visible:ring-primary h-10"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setCurrentPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
             </div>
 
-            {/* Orders table */}
-            <Card className="shadow-sm border-gray-200/80">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Lịch sử đơn hàng</CardTitle>
-                  <CardDescription>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="shrink-0 bg-white border-gray-200 shadow-sm gap-2 h-10 font-medium"
+                >
+                  <ArrowDownUp className="h-4 w-4" />
+                  <span className="hidden sm:inline">
+                    {SORT_LABELS[sortOption]}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                {(Object.entries(SORT_LABELS) as [SortOption, string][]).map(
+                  ([value, label]) => (
+                    <DropdownMenuItem
+                      key={value}
+                      onClick={() => {
+                        setSortOption(value);
+                        setCurrentPage(1);
+                      }}
+                      className={cn(
+                        "cursor-pointer font-medium",
+                        sortOption === value
+                          ? "text-primary font-bold bg-primary/5"
+                          : "",
+                      )}
+                    >
+                      {label}
+                    </DropdownMenuItem>
+                  ),
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <Card className="shadow-sm border-gray-200/80 overflow-hidden">
+            <CardHeader className="bg-gray-50/50 pb-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-bold">
+                    Lịch sử đơn hàng
+                  </CardTitle>
+                  <CardDescription className="text-xs">
                     {isLoading
                       ? "Đang tải..."
                       : filteredOrders.length > 0
@@ -475,106 +457,108 @@ export default function OrdersPage() {
                         : "0 đơn hàng"}
                   </CardDescription>
                 </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                {isLoading ? (
-                  <div className="flex justify-center items-center py-20">
-                    <Loader2 className="h-7 w-7 animate-spin text-primary/60" />
-                  </div>
-                ) : (
-                  <>
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow className="bg-gray-50/70 hover:bg-gray-50/70">
-                            <TableHead className="font-semibold text-gray-700 pl-6">
-                              Mã đơn hàng
-                            </TableHead>
-                            <TableHead className="font-semibold text-gray-700">
-                              Ngày đặt
-                            </TableHead>
-                            <TableHead className="font-semibold text-gray-700">
-                              Thanh toán
-                            </TableHead>
-                            <TableHead className="font-semibold text-gray-700">
-                              Tổng tiền
-                            </TableHead>
-                            <TableHead className="font-semibold text-gray-700">
-                              Trạng thái
-                            </TableHead>
-                            <TableHead className="font-semibold text-gray-700 text-right pr-6">
-                              Thao tác
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {paginatedOrders.length > 0 ? (
-                            paginatedOrders.map((order: Order) => (
-                              <TableRow
-                                key={order.id}
-                                className="hover:bg-gray-50/50 transition-colors"
-                              >
-                                <TableCell className="pl-6">
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <Loader2 className="h-7 w-7 animate-spin text-primary/60" />
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-50/30 hover:bg-gray-50/30">
+                          <TableHead className="font-bold text-gray-900 px-6 h-11">
+                            Mã đơn hàng
+                          </TableHead>
+                          <TableHead className="font-bold text-gray-900 px-4 h-11">
+                            Ngày đặt
+                          </TableHead>
+                          <TableHead className="font-bold text-gray-900 px-4 h-11">
+                            Thanh toán
+                          </TableHead>
+                          <TableHead className="font-bold text-gray-900 px-4 h-11">
+                            Tổng tiền
+                          </TableHead>
+                          <TableHead className="font-bold text-gray-900 px-4 h-11">
+                            Trạng thái
+                          </TableHead>
+                          <TableHead className="font-bold text-gray-900 text-right pr-6 h-11">
+                            Thao tác
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {paginatedOrders.length > 0 ? (
+                          paginatedOrders.map((order: Order) => (
+                            <TableRow
+                              key={order.id}
+                              className="hover:bg-gray-50/50 transition-colors"
+                            >
+                              <TableCell className="px-6 py-4 whitespace-normal">
+                                <Link
+                                  href={`/account/orders/${order.order_number}`}
+                                  className="font-mono text-sm font-bold text-primary hover:underline underline-offset-4"
+                                >
+                                  #{order.order_number}
+                                </Link>
+                              </TableCell>
+                              <TableCell className="px-4 py-4 whitespace-normal text-sm text-gray-600 font-medium">
+                                {formatDate(order.created_at)}
+                              </TableCell>
+                              <TableCell className="px-4 py-4 whitespace-normal">
+                                <PaymentBadge status={order.payment_status} />
+                              </TableCell>
+                              <TableCell className="px-4 py-4 whitespace-normal font-bold text-gray-900">
+                                {formatPrice(Number(order.total))}
+                              </TableCell>
+                              <TableCell className="px-4 py-4 whitespace-normal">
+                                <StatusBadge status={order.status} />
+                              </TableCell>
+                              <TableCell className="text-right pr-6 py-4">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  asChild
+                                  className="h-8 px-3 text-gray-600 hover:text-primary hover:bg-primary/5 font-medium"
+                                >
                                   <Link
                                     href={`/account/orders/${order.order_number}`}
-                                    className="font-mono text-sm font-medium text-primary hover:underline underline-offset-4"
                                   >
-                                    #{order.order_number}
+                                    <Eye className="h-4 w-4 mr-1.5" />
+                                    Chi tiết
                                   </Link>
-                                </TableCell>
-                                <TableCell className="text-sm text-gray-600">
-                                  {formatDate(order.created_at)}
-                                </TableCell>
-                                <TableCell>
-                                  <PaymentBadge status={order.payment_status} />
-                                </TableCell>
-                                <TableCell className="font-semibold text-gray-900">
-                                  {formatPrice(Number(order.total))}
-                                </TableCell>
-                                <TableCell>
-                                  <StatusBadge status={order.status} />
-                                </TableCell>
-                                <TableCell className="text-right pr-6">
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    asChild
-                                    className="h-8 text-gray-600 hover:text-primary"
-                                  >
-                                    <Link
-                                      href={`/account/orders/${order.order_number}`}
-                                    >
-                                      <Eye className="h-3.5 w-3.5 mr-1.5" />
-                                      Chi tiết
-                                    </Link>
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          ) : (
-                            <EmptyState hasFilters={hasActiveFilters} />
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <EmptyState hasFilters={hasActiveFilters} />
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
 
-                    {/* Pagination */}
-                    {totalPages > 1 && filteredOrders.length > 0 && (
-                      <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-                        <p className="text-xs text-gray-500">
-                          Trang {currentPage} / {totalPages}
-                        </p>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="h-8 px-3 text-xs"
-                          >
-                            Trước
-                          </Button>
+                  {/* Pagination */}
+                  {totalPages > 1 && filteredOrders.length > 0 && (
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50/30">
+                      <p className="text-xs text-gray-500 font-medium">
+                        Trang {currentPage} / {totalPages}
+                      </p>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="h-8 px-3 text-xs font-medium"
+                        >
+                          Trước
+                        </Button>
 
+                        <div className="flex items-center gap-1 mx-2">
                           {getPageNumbers(currentPage, totalPages).map(
                             (page, index) =>
                               page === "..." ? (
@@ -588,35 +572,40 @@ export default function OrdersPage() {
                                 <Button
                                   key={`page-${page}`}
                                   variant={
-                                    currentPage === page ? "default" : "outline"
+                                    currentPage === page ? "default" : "ghost"
                                   }
                                   size="sm"
-                                  className="h-8 w-8 p-0 text-xs"
+                                  className={cn(
+                                    "h-8 w-8 p-0 text-xs font-bold",
+                                    currentPage === page
+                                      ? ""
+                                      : "hover:bg-gray-100 text-gray-600",
+                                  )}
                                   onClick={() => handlePageChange(Number(page))}
                                 >
                                   {page}
                                 </Button>
                               ),
                           )}
-
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="h-8 px-3 text-xs"
-                          >
-                            Sau
-                          </Button>
                         </div>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="h-8 px-3 text-xs font-medium"
+                        >
+                          Sau
+                        </Button>
                       </div>
-                    )}
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </main>
-        </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </main>
       </div>
     </div>
   );
