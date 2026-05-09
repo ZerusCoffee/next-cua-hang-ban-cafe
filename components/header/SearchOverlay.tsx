@@ -98,6 +98,12 @@ export default function SearchOverlay({ onClose }: SearchOverlayProps) {
                 </div>
               </li>
             ))}
+            {/* Không tìm thấy sản phẩm */}
+            {query.length >= 2 && !loading && suggestions.length === 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg p-3 text-sm text-gray-500 z-50 text-center">
+                Không tìm thấy sản phẩm nào.
+              </div>
+            )}
           </ul>
         )}
       </form>
