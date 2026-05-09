@@ -13,3 +13,22 @@ export interface CouponAPIResponse {
   message: string;
   data: Coupon[];
 }
+
+export interface CouponPreviewAPIResponse {
+  status: string;
+  message: string;
+  data: CouponPreview;
+}
+
+export interface CouponPreview {
+  discount_amount: number;
+  coupon: CouponChild;
+  subtotal: number;
+  total_after_discount: number;
+}
+
+export interface CouponChild {
+  code: string;
+  name: string;
+  type: string;
+}

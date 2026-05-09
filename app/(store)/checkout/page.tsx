@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 import { useAddress, useDefaultAddress } from "@/services/address";
 import { CheckOut } from "@/services/checkout";
+import { useCouponPreview } from "@/services/coupon";
 import { Address } from "@/types/address.type";
 import {
   CheckoutRequest,
@@ -43,8 +44,16 @@ export default function CheckoutPage() {
 
   const form = useForm<CheckoutRequest>({
     resolver: zodResolver(CheckoutRequestSchema),
-    defaultValues: { payment_method: "cod", customer_notes: "" },
+    defaultValues: {
+      payment_method: "cod",
+      customer_notes: "",
+      coupon_code: "",
+    },
   });
+
+  const couponCode = form.watch("coupon_code");
+  const { error: couponError, isLoading: couponPreviewLoading } =
+    useCouponPreview(couponCode || null);
 
   const defaultAddress = address || null;
 
@@ -102,6 +111,12 @@ export default function CheckoutPage() {
     else if (step === "payment") setStep("coupon");
     else if (step === "review") setStep("payment");
   };
+
+  const isContinueDisabled =
+    processing ||
+    !selectedAddress ||
+    (couponCode && couponError) ||
+    couponPreviewLoading;
 
   if (cartLoading)
     return (
@@ -163,17 +178,17 @@ export default function CheckoutPage() {
                       size="lg"
                       className={
                         step === "review"
-                          ? "bg-green-600 hover:bg-green-700 cursor-pointer"
-                          : "bg-primary"
+                          ? "bg-green-600 hover:bg-green-700 cursor-pointer text-white font-bold"
+                          : "bg-primary text-white font-bold"
                       }
-                      disabled={processing || !selectedAddress}
+                      disabled={isContinueDisabled as boolean}
                       onClick={
                         step === "review"
                           ? form.handleSubmit(onHandleSubmit)
                           : nextStep
                       }
                     >
-                      {processing ? (
+                      {processing || couponPreviewLoading ? (
                         <Loader2 className="animate-spin mr-2" />
                       ) : null}
                       {step === "review" ? "Xác nhận đặt hàng" : "Tiếp tục"}
