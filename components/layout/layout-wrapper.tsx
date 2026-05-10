@@ -11,7 +11,7 @@ export default function LayoutWrapper({
   const isHome = pathname === "/";
 
   return (
-    <main className={`flex-1 ${isHome ? "" : "mt-24 md:mt-32"}`}>
+    <main className={`flex-1 ${isHome ? "" : "mt-14 md:mt-26"}`}>
       {children}
     </main>
   );

@@ -103,6 +103,7 @@ export default function ReviewsPage() {
                           src={review.productImage}
                           alt={review.productName}
                           fill
+                          sizes="(max-width: 768px) 100vw, 96px"
                           className="object-cover"
                         />
                       </div>
@@ -189,6 +190,7 @@ export default function ReviewsPage() {
                         src={pending.productImage}
                         alt={pending.productName}
                         fill
+                        sizes="(max-width: 768px) 96px, 96px"
                         className="object-cover"
                       />
                     </div>

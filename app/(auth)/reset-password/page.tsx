@@ -57,7 +57,7 @@ function ResetPasswordChecker() {
   const email = searchParams.get("email");
 
   if (!token || !email) {
-    redirect("/account/forgot-password"); // Redirect về trang chủ nếu thiếu token hoặc email
+    redirect("/"); // Redirect về trang chủ nếu thiếu token hoặc email
   }
 
   return <ResetPasswordContent />;

@@ -84,6 +84,7 @@ export default function HeaderSearch() {
                         src={product.image}
                         alt={product.name}
                         fill
+                        sizes="40px"
                         className="object-cover"
                       />
                     ) : (

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { resetPassword } from "@/services/auth";
 import { resetPasswordSchema } from "@/validation/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -49,6 +49,7 @@ export function ResetPasswordForm({
     await resetPassword({ ...data, email, token });
     toast.success("Đặt lại mật khẩu thành công");
     form.reset();
+    redirect("/login");
   };
 
   return (
