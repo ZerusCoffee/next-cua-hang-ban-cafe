@@ -21,7 +21,6 @@ export function CouponStep() {
   const selectedCoupon = watch("coupon_code");
   const [customCode, setCustomCode] = useState("");
 
-  // Use the preview hook to show current status in this step too
   const {
     preview,
     isLoading: isChecking,
@@ -30,15 +29,24 @@ export function CouponStep() {
 
   const handleSelectCoupon = (code: string) => {
     if (selectedCoupon === code) {
-      setValue("coupon_code", "");
+      setValue("coupon_code", undefined, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
     } else {
-      setValue("coupon_code", code);
+      setValue("coupon_code", code, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
     }
   };
 
   const handleApplyCustomCode = () => {
     if (customCode.trim()) {
-      setValue("coupon_code", customCode.trim());
+      setValue("coupon_code", customCode.trim(), {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       setCustomCode("");
     }
   };
@@ -115,7 +123,12 @@ export function CouponStep() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setValue("coupon_code", "")}
+                onClick={() =>
+                  setValue("coupon_code", undefined, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
                 className="text-gray-400 hover:text-red-500 hover:bg-transparent"
               >
                 <X className="h-4 w-4" />

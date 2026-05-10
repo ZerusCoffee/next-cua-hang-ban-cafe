@@ -11,6 +11,7 @@ import {
   Package,
   Phone,
   RefreshCw,
+  Ticket,
   User,
   XCircle,
 } from "lucide-react";
@@ -91,6 +92,8 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
       setIsCancelDialogOpen(false);
     }
   };
+
+  const discountAmount = order.subtotal - order.total;
 
   return (
     <div className="space-y-8 pt-4 animate-in fade-in duration-500">
@@ -243,6 +246,19 @@ export default function OrderDetailClient({ order }: OrderDetailClientProps) {
                       {formatCurrency(order.subtotal)}
                     </span>
                   </div>
+
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between items-center text-sm text-[#D94E28]">
+                      <div className="flex items-center gap-1">
+                        <Ticket className="h-3.5 w-3.5" />
+                        <span>Giảm giá</span>
+                      </div>
+                      <span className="font-bold">
+                        -{formatCurrency(discountAmount)}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-center text-sm text-emerald-600">
                     <span>Vận chuyển</span>
                     <span className="font-medium uppercase text-xs">
