@@ -4,8 +4,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { setJWTtoCookie } from "@/lib/cookie";
 import { cn } from "@/lib/utils";
+import { createAddress, useProvinces, useWards } from "@/services/address";
 import { register } from "@/services/auth";
 import { useUser } from "@/services/user";
+import { AddressFormData, addressSchema } from "@/validation/address.schema";
 import { registerSchema } from "@/validation/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -20,16 +22,21 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { AddressFormData, addressSchema } from "@/validation/address.schema";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { createAddress, useProvinces, useWards } from "@/services/address";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
-type RegisterFormData = z.infer<typeof registerSchema> & Omit<AddressFormData, 'full_name' | 'is_default'>
+type RegisterFormData = z.infer<typeof registerSchema> &
+  Omit<AddressFormData, "full_name" | "is_default">;
 
 const formSchema = registerSchema.merge(addressSchema).omit({
   full_name: true,
-  is_default: true
-})
+  is_default: true,
+});
 
 export function RegisterForm({
   className,
@@ -71,23 +78,24 @@ export function RegisterForm({
   const onSubmit = async (data: RegisterFormData) => {
     const registerRes = await register(data);
 
-    // console.log(data)
-
     if (registerRes.status === "success" && registerRes.data?.access_token) {
-
       await setJWTtoCookie(registerRes.data.access_token);
+      try {
+        await createAddress({
+          full_name: data.name,
+          phone: data.phone,
+          province: data.province,
+          ward: data.ward,
+          details: data.details,
+          is_default: true,
+        });
+      } catch (error) {
+        console.error("Lỗi khi tạo địa chỉ mặc định:", error);
+      }
+
       mutate({ data: registerRes.data.customer }, { revalidate: false });
-      router.push("/");
       toast.success(registerRes.message);
-      await createAddress({
-        full_name: data.name,
-        phone: data.phone,
-        province: data.province,
-        ward: data.ward,
-        details: data.details,
-        is_default: true
-      });
-      // console.log("Tao dia chi thanh cong")
+      router.push("/");
       return;
     }
 
@@ -119,14 +127,13 @@ export function RegisterForm({
       <Card className="border-none shadow-none">
         <CardContent className="p-0">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(
-              onSubmit,
-              (errors) => {
-                console.log("ERRORS:", errors)
-              }
-            )} className="space-y-5" >
+            <form
+              onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                console.log("ERRORS:", errors);
+              })}
+              className="space-y-5"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                 {/* Grid column 1 */}
                 <div className="space-y-4">
                   <FormField
@@ -134,7 +141,9 @@ export function RegisterForm({
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-700">Họ và tên</FormLabel>
+                        <FormLabel className="text-gray-700">
+                          Họ và tên
+                        </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -173,7 +182,9 @@ export function RegisterForm({
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-gray-700">Mật khẩu</FormLabel>
+                        <FormLabel className="text-gray-700">
+                          Mật khẩu
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="password"
@@ -279,7 +290,9 @@ export function RegisterForm({
                         <FormLabel>Phường/Xã *</FormLabel>
                         <Select
                           disabled={
-                            isSubmitting || !selectedProvinceName || isLoadingWards
+                            isSubmitting ||
+                            !selectedProvinceName ||
+                            isLoadingWards
                           }
                           onValueChange={field.onChange}
                           value={field.value}
