@@ -18,35 +18,27 @@ export default function BannerCarousel() {
     {
       id: 1,
       image: "/assets/images/slide_1_img.jpg",
-      alt: "Slider 1",
-      width: 1920,
-      height: 600,
+      alt: "Zerus Coffee Banner 1",
     },
     {
       id: 2,
       image: "/assets/images/slide_3_img.jpg",
-      alt: "Slider 2",
-      width: 1920,
-      height: 600,
+      alt: "Zerus Coffee Banner 2",
     },
     {
       id: 3,
       image: "/assets/images/slide_4_img.jpg",
-      alt: "Slider 3",
-      width: 1920,
-      height: 600,
+      alt: "Zerus Coffee Banner 3",
     },
     {
       id: 4,
       image: "/assets/images/slide_5_img.jpg",
-      alt: "Slider 4",
-      width: 1920,
-      height: 600,
+      alt: "Zerus Coffee Banner 4",
     },
   ];
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-stone-50 overflow-hidden">
       <Carousel
         plugins={[plugin.current]}
         className="w-full"
@@ -57,14 +49,23 @@ export default function BannerCarousel() {
         <CarouselContent>
           {banners.map((banner) => (
             <CarouselItem key={banner.id} className="basis-full p-0">
-              <div className="relative w-full h-85 md:h-200">
+              {/* Responsive height and better scaling */}
+              <div className="relative w-full h-112.5 sm:h-137.5 md:h-162.5 lg:h-200 xl:h-225">
                 <Image
                   src={banner.image}
                   alt={banner.alt}
                   fill
-                  className="object-cover"
+                  className="object-cover object-center transition-transform duration-2000 hover:scale-105"
+                  sizes="100vw"
                   priority={banner.id === 1}
+                  unoptimized
                 />
+
+                {/* Gradient Overlay to handle header contrast and "overlap" feel */}
+                <div className="absolute inset-0 bg-linear-to-b from-black/40 via-transparent to-transparent opacity-60 pointer-events-none"></div>
+
+                {/* Subtle bottom fade */}
+                <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-stone-50/50 to-transparent pointer-events-none"></div>
               </div>
             </CarouselItem>
           ))}
