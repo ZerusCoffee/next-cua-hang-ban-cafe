@@ -55,8 +55,8 @@ export default function BannerCarousel() {
                   src={banner.image}
                   alt={banner.alt}
                   fill
-                  className="object-cover object-center transition-transform duration-2000 hover:scale-105"
                   sizes="100vw"
+                  className="object-cover object-center transition-transform duration-2000 hover:scale-105"
                   priority={banner.id === 1}
                   unoptimized
                 />

@@ -51,6 +51,7 @@ export const CartItemComponent = ({
           src={`${imageSrc}`}
           alt={item.product_name}
           fill
+          sizes="(max-width: 768px) 96px, 128px"
           className="object-cover transition-transform group-hover:scale-110"
           unoptimized
         />
