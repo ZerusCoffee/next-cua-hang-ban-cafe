@@ -209,11 +209,10 @@ export function Header() {
                             {({ active }) => (
                               <Link
                                 href={item.href}
-                                className={`block px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors ${
-                                  active
-                                    ? "bg-orange-50 text-[#D94E28]"
-                                    : "text-stone-600"
-                                }`}
+                                className={`block px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors ${active
+                                  ? "bg-orange-50 text-[#D94E28]"
+                                  : "text-stone-600"
+                                  }`}
                               >
                                 {item.name}
                               </Link>
@@ -226,11 +225,10 @@ export function Header() {
                           {({ active }) => (
                             <button
                               onClick={handleLogout}
-                              className={`block w-full text-left px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors ${
-                                active
-                                  ? "bg-rose-50 text-rose-600"
-                                  : "text-rose-500"
-                              }`}
+                              className={`block w-full text-left px-4 py-2 text-[11px] font-bold uppercase tracking-wide transition-colors ${active
+                                ? "bg-rose-50 text-rose-600"
+                                : "text-rose-500"
+                                }`}
                             >
                               Đăng xuất
                             </button>
@@ -245,7 +243,7 @@ export function Header() {
                   <div className="hidden md:flex items-center space-x-2">
                     <button
                       onClick={() => router.push("/login")}
-                      className={`animate-btn px-3 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all ${isHome ? "text-white hover:bg-white/10" : "text-stone-600 hover:bg-stone-50"}`}
+                      className={`animate-btn px-3 py-2 rounded-lg text-[12px] font-bold uppercase tracking-widest transition-all cursor-pointer ${isHome ? "text-white hover:bg-white/10" : "text-stone-600 hover:bg-stone-200"}`}
                     >
                       Đăng nhập
                     </button>
@@ -413,7 +411,7 @@ export function Header() {
                           router.push("/login");
                           setMobileMenuOpen(false);
                         }}
-                        className="w-full py-4 rounded-2xl border-2 border-stone-100 text-stone-600 hover:bg-stone-50 font-black uppercase text-[10px] tracking-widest transition-all"
+                        className="w-full py-4 rounded-2xl border-2 border-stone-100 text-stone-600 hover:bg-stone-200 hover:text-amber-600 font-black uppercase text-[10px] tracking-widest transition-all"
                       >
                         Đăng nhập
                       </button>
