@@ -47,7 +47,7 @@ export default function CheckoutPage() {
     defaultValues: {
       payment_method: "cod",
       customer_notes: "",
-      coupon_code: "",
+      coupon_code: undefined,
     },
   });
 
@@ -82,8 +82,16 @@ export default function CheckoutPage() {
 
   const onHandleSubmit = async (data: CheckoutRequest) => {
     setProcessing(true);
+    // Ensure coupon_code is undefined if empty to clean the payload
+    const payload = {
+      ...data,
+      coupon_code: data.coupon_code || undefined,
+    };
+
+    console.log("Submitting Checkout Payload:", payload);
+
     try {
-      const res = await CheckOut(data);
+      const res = await CheckOut(payload);
       mutate(null, false);
       if (res.data.payment_method === "cod" || isPaidViaPayPal) {
         router.push(`/account/orders/${res.data.order_number}`);
