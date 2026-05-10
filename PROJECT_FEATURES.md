@@ -10,7 +10,7 @@ The application is built using Next.js, evident from the `app` directory structu
 
 Handles user authentication flows, allowing users to securely access the application.
 - **User Login:** Users can log in using their credentials via the `LoginForm`.
-- **User Registration:** New users can create an account via the registration page.
+- **User Registration:** New users can create an / via the registration page.
 - **Google Authentication:** Supports login using Google accounts.
 - **Password Recovery:** Users can initiate a "forgot password" flow to receive a password reset email.
 - **Password Reset:** Allows users to set a new password after a successful password recovery request.
